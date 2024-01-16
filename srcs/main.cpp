@@ -7,6 +7,7 @@
 #include <netdb.h>
 #include <cstdio> // Inclusion nécessaire pour perror
 #include <csignal>
+#include <poll.h>
 #include "irc.hpp"
 
 int main(int ac, char **av) {
@@ -37,7 +38,16 @@ int main(int ac, char **av) {
             // Boucle pour maintenir la connexion ouverte
             char buffer[1024];
             int bytesReceived;
+            struct pollfd fds[MAX_CLIENTS + 1];
+            memset(fds, 0, sizeof(fds));
+
+            fds[0].fd = server.getServerSocket();
+            fds[0].events = POLLIN;
+
+            int activeClients = 0;
             while (true) {
+                int popoll = poll(fds, activeClients + 1)
+                if (popoll)
                 bytesReceived = recv(client.getclientSocket(), buffer, sizeof(buffer), 0);
                 if (bytesReceived <= 0) {
                     break; // Déconnexion du client
