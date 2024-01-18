@@ -14,6 +14,9 @@ class Client
 
 		std::string _nickName;
 		std::string _userName;
+		std::string _pass;
+		
+		bool _verified;
 
 	public:
 		~Client();

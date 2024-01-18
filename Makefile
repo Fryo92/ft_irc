@@ -25,20 +25,12 @@ WHITE		= \033[0;97m
 # Sources
 
 FILES	=	main \
-<<<<<<< HEAD
 			Server Client 
-=======
-			class/Server class/Client 
->>>>>>> 0569a0ed9758c7d0add9de33132a3a0103b15fed
 
 SRCS	=	$(addprefix $(SRC_DIR), $(addsuffix .cpp, $(FILES)))
 OBJS	=	$(addprefix $(OBJ_DIR), $(addsuffix .o, $(FILES)))
 
-<<<<<<< HEAD
 DEP		=	Server Client	
-=======
-DEP		=	irc Server Client	
->>>>>>> 0569a0ed9758c7d0add9de33132a3a0103b15fed
 DEPS	=	$(addprefix include/, $(addsuffix .hpp, $(DEP)))
 DEPEN	=	$(DEPS) Makefile
 
