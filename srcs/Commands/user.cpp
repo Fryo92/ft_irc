@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-void	Server::user(Client client){
+void	Server::user(Client &client){
 		
 	std::string user;
 
@@ -14,7 +14,7 @@ void	Server::user(Client client){
 	else if (client.getBuf().size() > 2){
 		std::cerr << ERR_ERRONEUSUSER(_name, user) << std::endl;
 	}
-	else if (!client.getUserName().empty())
+	else if (client.getUserName().empty())
 	{
 		for (size_t i = 0; i < client.getBuf()[1].size(); i++)
 		{
@@ -25,8 +25,9 @@ void	Server::user(Client client){
 			}
 		}	
 		client.setUserName(client.getBuf()[1]);
+		client.setVerif();
 	}
-	else if (client.getUserName().empty() || client.getPass().empty()){
+	else if (client.getNickName().empty() || client.getPass().empty()){
 		std::cerr << ERR_NOTREGISTERED(_name) << std::endl;
 		std::cerr << "Enter PASS, NICK, USER in this order" << std::endl;
 	}

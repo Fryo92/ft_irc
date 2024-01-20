@@ -26,12 +26,12 @@ WHITE		= \033[0;97m
 
 FILES	=	main \
 			Server Client \
-			# Commands/nick Commands/pass Commands/user
+			Commands/nick Commands/pass Commands/user
 
 SRCS	=	$(addprefix $(SRC_DIR), $(addsuffix .cpp, $(FILES)))
 OBJS	=	$(addprefix $(OBJ_DIR), $(addsuffix .o, $(FILES)))
 
-DEP		=	Server Client	
+DEP		=	Server Client utils	
 DEPS	=	$(addprefix include/, $(addsuffix .hpp, $(DEP)))
 DEPEN	=	$(DEPS) Makefile
 

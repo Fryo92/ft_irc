@@ -9,7 +9,6 @@
 # include <poll.h>
 # include <vector>
 # include <map>
-# include <functional>
 # include "Client.hpp"
 # include "utils.hpp"
 
@@ -32,7 +31,8 @@ class Server {
 		int _activeClients;
 		std::map<int, Client> clientsManage;
 
-		std::map<std::string, std::function<void(Client)>> commands;
+		typedef void (Server::*CommandFunction)(Client&);
+    	std::map<std::string, CommandFunction> commands;
 
 		bool	_shutdown;
 
@@ -46,11 +46,14 @@ class Server {
 		void	deleteClient(Client client);
 		void	listenClient();
 		void	initCommands();
-		void	applyCommand(Client client);
+		void	applyCommand(Client &client);
 
-		void	nick(Client client);
-		void	user(Client client);
-		void	pass(Client client);
+		void	cap(Client &client);
+		void	nick(Client &client);
+		void	user(Client &client);
+		void	pass(Client &client);
+
+		std::string	ft_toupper(std::string &str);
 
 };
 

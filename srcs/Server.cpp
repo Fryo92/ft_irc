@@ -46,6 +46,7 @@ Server::Server(int port, std::string pass) : _port(port), _name("MyIRC_uWu"), _p
 	memset(_fds, 0, sizeof(_fds));
 	_fds[0].fd = _socket;
 	_fds[0].events = POLLIN;
+	initCommands();
 	std::cout << _name << " server started on port " << _port << std::endl;
 
 }
@@ -96,15 +97,12 @@ void	Server::listenClient() {
 		if (_fds[i].revents & POLLIN) {
 			char buffer[1024];
 			int bytesRead = recv(_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
-
 			if (bytesRead > 0) {
 				buffer[bytesRead] = '\0';
 				clientsManage[_fds[i].fd].setBuf(buffer);
 				applyCommand(clientsManage[_fds[i].fd]);
 			} else {
-				if (bytesRead == 0)
-                    std::cout << "Client " << i << " disconnected" << std::endl;
-				else
+				if (bytesRead < 0)
                     std::cerr << "Error client " << i << " data" << std::endl;
 				deleteClient(clientsManage[_fds[i].fd]);
 				i--;
@@ -121,7 +119,7 @@ void	Server::deleteClient(Client client) {
 		i++;	
 	}
 	close(client.getSocket());
-
+	std::cout << "Client " << i - 1 << " disconnected" << std::endl;
 	clientsManage.erase(client.getSocket());
 	_activeClients--;
 
@@ -130,14 +128,78 @@ void	Server::deleteClient(Client client) {
 }
 
 void	Server::initCommands(){
-	commands["/nick"] = &Server::nick;
-	commands["/pass"] = &Server::pass;
-	commands["/user"] = &Server::user;
+	commands["CAP"] = &Server::cap;
+	commands["NICK"] = &Server::nick;
+	commands["PASS"] = &Server::pass;
+	commands["USER"] = &Server::user;
 }
 
-void	Server::applyCommand(Client client) {
-	if (commands[client.getBuf()[0]])
-		commands[client.getBuf()[0]](client);\
+void	Server::applyCommand(Client &client) {
+	std::map<std::string, CommandFunction> ::iterator it = commands.find(ft_toupper(client.getBuf()[0]));
+	if (it != commands.end())
+		(this->*(it->second))(client);
 	else
 		std::cerr << ERR_UNKNOWNCOMMAND(_name, client.getBuf()[0]) << std::endl;
+	client.getBuf().clear();
+}
+
+std::string	Server::ft_toupper(std::string &str){
+	for (size_t i = 0; i < str.size(); i++)
+		str[i] = std::toupper(str[i]);
+	return (str);	
+}
+
+void	Server::cap(Client &client){
+	if (!client.getIrssi()){
+		for (size_t i = 0; i < client.getBuf().size(); i++){
+			if (client.getBuf()[i] == "PASS"){
+				if (client.getBuf()[i + 2] != "NICK"){
+					std::cerr << ERR_PASSWDMISMATCH(_name) << std::endl;
+					return;
+				}
+				else if (client.getBuf()[i + 1] != _password){
+					std::cerr << ERR_PASSWDMISMATCH(_name) << std::endl;
+					return;
+				}
+				else
+					client.setPass(client.getBuf()[i + 1]);
+			}
+			if (client.getBuf()[i] == "NICK"){
+				for (std::map<int, Client>::iterator ite = clientsManage.begin(); ite != clientsManage.end(); ite++)
+				{
+					if (ite->second.getNickName() == client.getBuf()[i + 1])
+						client.getBuf()[i + 1] += _activeClients;
+
+				}
+				client.setNickName(client.getBuf()[i + 1]);
+			}
+			if (client.getBuf()[i] == "USER"){
+				std::string nick;
+				for (int j = i + 1; client.getBuf()[j] != "localhost"; j++){
+					nick += client.getBuf()[j];
+					if (client.getBuf()[j + 1] != "localhost")
+						nick += " ";
+				}
+				client.setUserName(nick);
+			}
+			if (client.getBuf()[i] == "localhost")
+			{
+				std::string real;
+				for (size_t j = i; j < client.getBuf().size(); j++)
+				{
+					real += client.getBuf()[j];
+					if ((j + 1) != client.getBuf().size())
+						real += " ";
+				}
+				client.setRealName(real);
+			}
+		}
+		client.setRpl(RPL_WELCOME(user_id(client.getUserName(), client.getNickName()), client.getNickName()));
+		// const char* welcomeMessage = ":localhost 001 abiddane :Welcome to the IRC server!\n";
+		send(client.getSocket(), client.getRpl().c_str(), client.getRpl().size(), 0);
+		// send(client.getSocket(), welcomeMessage, std::strlen(welcomeMessage), 0);
+		std::cout << client.getRpl() << std::endl;
+	}
+	else
+		std::cerr << ERR_UNKNOWNCOMMAND(_name, client.getBuf()[0]) << std::endl;		
 }

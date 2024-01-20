@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-void	Server::nick(Client client){
+void	Server::nick(Client &client){
 	
 	std::string nickname;
 
@@ -25,9 +25,9 @@ void	Server::nick(Client client){
 				return ;
 			}
 		}
-		for (size_t i = 0; i < _activeClients; i++)
+		for (std::map<int, Client>::iterator ite = clientsManage.begin(); ite != clientsManage.end(); ite++)
 		{
-			if (nickname == clientsManage[i].getNickName())
+			if (nickname == ite->second.getNickName())
 			{
 				std::cerr << ERR_NICKNAMEINUSE(_name, nickname) << std::endl;
 				client.getBuf().clear();
@@ -44,5 +44,4 @@ void	Server::nick(Client client){
 		std::cerr << ERR_NOTREGISTERED(_name) << std::endl;
 		std::cerr << "Enter PASS, NICK, USER in this order" << std::endl;
 	}
-	client.getBuf().clear();
 }
