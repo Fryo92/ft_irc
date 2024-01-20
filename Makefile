@@ -25,7 +25,8 @@ WHITE		= \033[0;97m
 # Sources
 
 FILES	=	main \
-			Server Client 
+			Server Client \
+			# Commands/nick Commands/pass Commands/user
 
 SRCS	=	$(addprefix $(SRC_DIR), $(addsuffix .cpp, $(FILES)))
 OBJS	=	$(addprefix $(OBJ_DIR), $(addsuffix .o, $(FILES)))
@@ -40,6 +41,7 @@ OBJF	=	.cache_exists
 
 $(OBJF)	:
 	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(OBJ_DIR)/Commands
 
 all		:	$(NAME)
 

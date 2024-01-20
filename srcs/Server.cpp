@@ -8,11 +8,17 @@ Server::~Server(){
 
 }
 
-Server::Server(int port, std::string pass) : _port(port), _password(pass), _activeClients(0), _shutdown(false) {
+Server::Server(int port, std::string pass) : _port(port), _name("MyIRC_uWu"), _password(pass), _activeClients(0), _shutdown(false) {
+	
+	for (size_t i = 0; i < _password.size(); i++)
+	{
+		if (_password[i] == 32 || (_password[i] >= 9 && _password[i] <= 13))
+			throw (std::runtime_error("Invalid password."));
+	}
+	
 	_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (_socket == -1) {
-		std::cerr << "Server socket error." << std::endl;
-		throw;
+		throw (std::runtime_error("Server socket error."));
 	}
 
 	_addr.sin_family = AF_INET;
@@ -23,26 +29,24 @@ Server::Server(int port, std::string pass) : _port(port), _password(pass), _acti
 	int reuse = 1;
 	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) == -1) {
 		close(_socket);
-		std::cerr << "Error setting socket options." << std::endl;
-		throw;
+		throw (std::runtime_error("Error setting socket options."));
 	}
 
 	if (bind(_socket, (struct sockaddr *)&_addr, _size) == -1) {
         close(_socket);
-		std::cerr << "Error binding server." << std::endl;
-        throw;
+       	throw (std::runtime_error("Error binding server."));
+
     }
 
 	if (listen(_socket, MAX_CLIENTS) == -1) {
         close(_socket);
-		std::cerr << "Error listening connexion." << std::endl;
-        throw;
+        throw (std::runtime_error("Error listening connexion."));
     }
 
 	memset(_fds, 0, sizeof(_fds));
 	_fds[0].fd = _socket;
 	_fds[0].events = POLLIN;
-	std::cout << "IRC server started on port " << _port << std::endl;
+	std::cout << _name << " server started on port " << _port << std::endl;
 
 }
 
@@ -50,9 +54,8 @@ void	Server::process() {
 	while (_shutdown == false) {
 		_pollRet = poll(_fds, _activeClients + 1, -1);
 		if (_pollRet == -1){
-			std::cerr << "POOOOOLLLLLIIINN" << std::endl;
 			closeSocket();
-			throw;
+			throw (std::runtime_error("POOOOOLLLLLIIINN"));
 		}
 
 		if (_fds[0].revents & POLLIN)
@@ -76,7 +79,7 @@ void	Server::createClient(){
 	else {
 		if (_activeClients < MAX_CLIENTS){
 			Client client(clientSocket, clientAddr);
-			clientsManage.push_back(client);
+			clientsManage[clientSocket] = client;
 			_activeClients++;
 			_fds[_activeClients].fd = clientSocket;
 			_fds[_activeClients].events = POLLIN;
@@ -91,37 +94,50 @@ void	Server::createClient(){
 void	Server::listenClient() {
 	for (int i = 1; i <= _activeClients; i++) {
 		if (_fds[i].revents & POLLIN) {
-			std::cout << "ici" << std::endl;
 			char buffer[1024];
 			int bytesRead = recv(_fds[i].fd, buffer, sizeof(buffer) - 1, 0);
 
 			if (bytesRead > 0) {
 				buffer[bytesRead] = '\0';
-				std::cout << "Server says: " << buffer << std::endl;
-				if (strncmp(buffer, "quitter", 7) == 0)
-        			_shutdown = true;
+				clientsManage[_fds[i].fd].setBuf(buffer);
+				applyCommand(clientsManage[_fds[i].fd]);
 			} else {
 				if (bytesRead == 0)
                     std::cout << "Client " << i << " disconnected" << std::endl;
 				else
                     std::cerr << "Error client " << i << " data" << std::endl;
-				deleteClient(i);
+				deleteClient(clientsManage[_fds[i].fd]);
 				i--;
 			}
 		}
 	}
 }
 
-void	Server::deleteClient(int i) {
-	close(_fds[i].fd);
+void	Server::deleteClient(Client client) {
+	int i = 1;
+	while (i <= _activeClients){
+		if (_fds[i].fd == client.getSocket())
+			break;
+		i++;	
+	}
+	close(client.getSocket());
 
-	clientsManage.erase(clientsManage.begin() + i);
+	clientsManage.erase(client.getSocket());
 	_activeClients--;
 
 	for (int j = i; j <= _activeClients; ++j)
 		_fds[j] = _fds[j + 1];	
 }
 
-void	initCommandMap();
+void	Server::initCommands(){
+	commands["/nick"] = &Server::nick;
+	commands["/pass"] = &Server::pass;
+	commands["/user"] = &Server::user;
+}
 
-void	applyCommand();
+void	Server::applyCommand(Client client) {
+	if (commands[client.getBuf()[0]])
+		commands[client.getBuf()[0]](client);\
+	else
+		std::cerr << ERR_UNKNOWNCOMMAND(_name, client.getBuf()[0]) << std::endl;
+}

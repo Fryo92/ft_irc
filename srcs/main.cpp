@@ -10,6 +10,7 @@ int main(int ac, char **av) {
             server.process();
         }
         catch (std::exception &e) {
+            
         }
     }
     else

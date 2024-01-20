@@ -2,13 +2,16 @@
 # define SERVER_HPP
 
 # include <iostream>
+# include <cctype>
 # include <cstdlib>
 # include <cstring>
 # include <csignal>
 # include <poll.h>
 # include <vector>
 # include <map>
+# include <functional>
 # include "Client.hpp"
+# include "utils.hpp"
 
 # define MAX_CLIENTS 5
 
@@ -18,6 +21,7 @@ class Server {
 
 		int	_socket;
 		int	_port;
+		std::string _name;
 		std::string	_password;
 		sockaddr_in _addr;
 		socklen_t _size;
@@ -26,9 +30,9 @@ class Server {
 		int _pollRet;
 
 		int _activeClients;
-		std::vector<Client> clientsManage;
+		std::map<int, Client> clientsManage;
 
-		std::map<std::string, void(*)(const std::string, Client)> command;
+		std::map<std::string, std::function<void(Client)>> commands;
 
 		bool	_shutdown;
 
@@ -39,10 +43,14 @@ class Server {
 		void	process();
 		void	closeSocket();
 		void	createClient();
-		void	deleteClient(int i);
+		void	deleteClient(Client client);
 		void	listenClient();
-		void	initCommandMap();
-		void	applyCommand();
+		void	initCommands();
+		void	applyCommand(Client client);
+
+		void	nick(Client client);
+		void	user(Client client);
+		void	pass(Client client);
 
 };
 

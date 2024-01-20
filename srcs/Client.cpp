@@ -19,3 +19,13 @@ Client & Client::operator=(Client const & cpy){
 	}
 	return *this;
 }
+
+
+void	Client::setBuf(const std::string buffer)
+{
+	std::istringstream iss(buffer);
+    std::string token;
+
+    while (iss >> token)
+		_buf.push_back(token);
+}
