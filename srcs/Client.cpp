@@ -1,7 +1,7 @@
 #include "Client.hpp"
 #include "utils.hpp"
 
-Client::Client(){
+Client::Client() {
 
 }
 
@@ -9,11 +9,11 @@ Client::~Client(){
 
 }
 
-Client::Client(int sock, sockaddr_in addr) :_socket(sock), _addr(addr), _host("localhost") {
+Client::Client(int sock, sockaddr_in addr) :_socket(sock), _addr(addr), _host("localhost"), _invisible(false), _irssi(false), _verified(false) {
 
 }
 
-Client::Client(const Client& cpy) : _nickName(cpy._nickName), _userName(cpy._userName), _pass(cpy._pass), _buf(cpy._buf){
+Client::Client(const Client& cpy) : _nickName(cpy._nickName), _userName(cpy._userName), _pass(cpy._pass), _buf(cpy._buf), _invisible(false), _irssi(false), _verified(false){
 
 }
 

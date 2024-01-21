@@ -26,6 +26,8 @@ void	Server::user(Client &client){
 		}	
 		client.setUserName(client.getBuf()[1]);
 		client.setVerif();
+		client.setRpl(RPL_WELCOME(user_id(client.getUserName(), client.getNickName()), client.getNickName()));
+		send(client.getSocket(), client.getRpl().c_str(), client.getRpl().size(), 0);
 	}
 	else if (client.getNickName().empty() || client.getPass().empty()){
 		std::cerr << ERR_NOTREGISTERED(_name) << std::endl;
@@ -33,4 +35,14 @@ void	Server::user(Client &client){
 	}
 	else
 		std::cerr << ERR_ALREADYREGISTRED(_name) << std::endl;
+}
+
+void	Server::userIrssi(Client &client, int i){
+	std::string user;
+	for (int j = i + 1; client.getBuf()[j] != "localhost"; j++){
+		user += client.getBuf()[j];
+		if (client.getBuf()[j + 1] != "localhost")
+			user += " ";
+	}
+	client.setUserName(user);
 }

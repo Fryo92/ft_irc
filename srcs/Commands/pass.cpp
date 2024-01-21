@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "utils.hpp"
 
 void	Server::pass(Client &client){
 	
@@ -19,4 +20,18 @@ void	Server::pass(Client &client){
 	}
 	else
 		std::cerr << ERR_ALREADYREGISTRED(_name) << std::endl;
+}
+
+bool	Server::passIrssi(Client &client, int i){
+	if (client.getBuf()[i + 2] != "NICK"){
+		std::cerr << ERR_PASSWDMISMATCH(_name) << std::endl;
+		return false;
+	}
+	else if (client.getBuf()[i + 1] != _password){
+		std::cerr << ERR_PASSWDMISMATCH(_name) << std::endl;
+		return false;
+	}
+	else
+		client.setPass(client.getBuf()[i + 1]);
+	return true;	
 }

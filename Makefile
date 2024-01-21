@@ -25,8 +25,9 @@ WHITE		= \033[0;97m
 # Sources
 
 FILES	=	main \
-			Server Client \
-			Commands/nick Commands/pass Commands/user
+			Server Client utils \
+			Commands/nick Commands/pass Commands/user Commands/pong \
+			Commands/mode Commands/privmsg Commands/quit
 
 SRCS	=	$(addprefix $(SRC_DIR), $(addsuffix .cpp, $(FILES)))
 OBJS	=	$(addprefix $(OBJ_DIR), $(addsuffix .o, $(FILES)))

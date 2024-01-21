@@ -9,6 +9,7 @@
 # include <poll.h>
 # include <vector>
 # include <map>
+# include <sstream>
 # include "Client.hpp"
 # include "utils.hpp"
 
@@ -52,7 +53,16 @@ class Server {
 		void	nick(Client &client);
 		void	user(Client &client);
 		void	pass(Client &client);
+		void	pong(Client &client);
+		void	mode(Client &client);
+		void	privmsg(Client &client);
+		void	quit(Client &client);
 
+		void	nickIrssi(Client &client, int i);
+		void	userIrssi(Client &client, int i);
+		bool	passIrssi(Client &client, int i);
+
+		int	searchClientChannel(Client client);
 		std::string	ft_toupper(std::string &str);
 
 };

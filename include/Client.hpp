@@ -16,13 +16,14 @@ class Client
 		std::string _nickName;
 		std::string _userName;
 		std::string _host;
-		std::string _realName;
 		std::string _pass;
 		std::string _rpl;
 		std::vector<std::string>	_buf;
 
+		bool _invisible;
 		bool _irssi;
 		bool _verified;
+		bool _deco;
 
 	public:
 		Client();
@@ -37,19 +38,21 @@ class Client
 		std::string	&getUserName() {return _userName;};
 		std::string	&getPass() {return _pass;};
 		std::string &getHost() {return _host;};
-		std::string &getRealName() {return _realName;};
 		std::string &getRpl() {return _rpl;};
+		bool		getMode() {return _invisible;};
 		bool		getVerif() {return _verified;};
-		bool	getIrssi() {return _irssi;};
+		bool		getIrssi() {return _irssi;};
+		bool		getDeco() {return _deco;};
 		std::vector<std::string>	&getBuf() {return _buf;};
 
 
 		void	setNickName(const std::string &nick) {_nickName = nick;};
 		void	setUserName(const std::string &user) {_userName = user;};
 		void	setPass(const std::string &pass) {_pass = pass;};
-		void	setRealName(const std::string &real) {_realName = real;};
 		void	setRpl(const std::string &rpl) {_rpl = rpl;};
+		void	setMode(bool i) {_invisible = i;};
 		void	setVerif();
+		void	setDeco() {_deco = true;};
 		void	setIrssi() {_irssi = true;};
 		void	setBuf(const std::string &buffer);
 

@@ -45,3 +45,17 @@ void	Server::nick(Client &client){
 		std::cerr << "Enter PASS, NICK, USER in this order" << std::endl;
 	}
 }
+
+void	Server::nickIrssi(Client &client, int i){
+	for (std::map<int, Client>::iterator ite = clientsManage.begin(); ite != clientsManage.end(); ite++)
+	{
+		if (ite->second.getNickName() == client.getBuf()[i + 1]){
+			std::stringstream ss;
+			ss << _activeClients;
+			std::string str = ss.str();
+			client.setNickName(client.getBuf()[i + 1] + str);
+			return;
+		}
+	}
+	client.setNickName(client.getBuf()[i + 1]);
+}

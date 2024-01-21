@@ -8,7 +8,7 @@ Server::~Server(){
 
 }
 
-Server::Server(int port, std::string pass) : _port(port), _name("MyIRC_uWu"), _password(pass), _activeClients(0), _shutdown(false) {
+Server::Server(int port, std::string pass) : _port(port), _name("MyIRC"), _password(pass), _activeClients(0), _shutdown(false) {
 	
 	for (size_t i = 0; i < _password.size(); i++)
 	{
@@ -48,7 +48,6 @@ Server::Server(int port, std::string pass) : _port(port), _name("MyIRC_uWu"), _p
 	_fds[0].events = POLLIN;
 	initCommands();
 	std::cout << _name << " server started on port " << _port << std::endl;
-
 }
 
 void	Server::process() {
@@ -56,7 +55,7 @@ void	Server::process() {
 		_pollRet = poll(_fds, _activeClients + 1, -1);
 		if (_pollRet == -1){
 			closeSocket();
-			throw (std::runtime_error("POOOOOLLLLLIIINN"));
+			throw (std::runtime_error("Failed poll()."));
 		}
 
 		if (_fds[0].revents & POLLIN)
@@ -64,11 +63,6 @@ void	Server::process() {
 
 		listenClient();
 	}
-}
-
-void	Server::closeSocket(){
-	for (int i = 0; i <= _activeClients; i++)
-		close(_fds[i].fd);
 }
 
 void	Server::createClient(){
@@ -108,6 +102,14 @@ void	Server::listenClient() {
 				i--;
 			}
 		}
+		else if (_fds[i].revents & POLLOUT) {
+			if (clientsManage[_fds[i].fd].getDeco()){
+				clientsManage[_fds[i].fd].getBuf().clear();
+				deleteClient(clientsManage[_fds[i].fd]);
+				break;
+			}
+
+		}
 	}
 }
 
@@ -127,78 +129,24 @@ void	Server::deleteClient(Client client) {
 		_fds[j] = _fds[j + 1];	
 }
 
-void	Server::initCommands(){
-	commands["CAP"] = &Server::cap;
-	commands["NICK"] = &Server::nick;
-	commands["PASS"] = &Server::pass;
-	commands["USER"] = &Server::user;
-}
-
-void	Server::applyCommand(Client &client) {
-	std::map<std::string, CommandFunction> ::iterator it = commands.find(ft_toupper(client.getBuf()[0]));
-	if (it != commands.end())
-		(this->*(it->second))(client);
-	else
-		std::cerr << ERR_UNKNOWNCOMMAND(_name, client.getBuf()[0]) << std::endl;
-	client.getBuf().clear();
-}
-
-std::string	Server::ft_toupper(std::string &str){
-	for (size_t i = 0; i < str.size(); i++)
-		str[i] = std::toupper(str[i]);
-	return (str);	
-}
-
 void	Server::cap(Client &client){
-	if (!client.getIrssi()){
+	if (client.getIrssi() == false){
+		bool passw = false;
 		for (size_t i = 0; i < client.getBuf().size(); i++){
-			if (client.getBuf()[i] == "PASS"){
-				if (client.getBuf()[i + 2] != "NICK"){
-					std::cerr << ERR_PASSWDMISMATCH(_name) << std::endl;
-					return;
-				}
-				else if (client.getBuf()[i + 1] != _password){
-					std::cerr << ERR_PASSWDMISMATCH(_name) << std::endl;
-					return;
-				}
-				else
-					client.setPass(client.getBuf()[i + 1]);
-			}
-			if (client.getBuf()[i] == "NICK"){
-				for (std::map<int, Client>::iterator ite = clientsManage.begin(); ite != clientsManage.end(); ite++)
-				{
-					if (ite->second.getNickName() == client.getBuf()[i + 1])
-						client.getBuf()[i + 1] += _activeClients;
-
-				}
-				client.setNickName(client.getBuf()[i + 1]);
-			}
-			if (client.getBuf()[i] == "USER"){
-				std::string nick;
-				for (int j = i + 1; client.getBuf()[j] != "localhost"; j++){
-					nick += client.getBuf()[j];
-					if (client.getBuf()[j + 1] != "localhost")
-						nick += " ";
-				}
-				client.setUserName(nick);
-			}
-			if (client.getBuf()[i] == "localhost")
-			{
-				std::string real;
-				for (size_t j = i; j < client.getBuf().size(); j++)
-				{
-					real += client.getBuf()[j];
-					if ((j + 1) != client.getBuf().size())
-						real += " ";
-				}
-				client.setRealName(real);
-			}
+			if (client.getBuf()[i] == "PASS")
+				passw = passIrssi(client, i);
+			if (client.getBuf()[i] == "NICK")
+				nickIrssi(client, i);
+			if (client.getBuf()[i] == "USER")
+				userIrssi(client, i);
 		}
-		client.setRpl(RPL_WELCOME(user_id(client.getUserName(), client.getNickName()), client.getNickName()));
-		// const char* welcomeMessage = ":localhost 001 abiddane :Welcome to the IRC server!\n";
-		send(client.getSocket(), client.getRpl().c_str(), client.getRpl().size(), 0);
-		// send(client.getSocket(), welcomeMessage, std::strlen(welcomeMessage), 0);
-		std::cout << client.getRpl() << std::endl;
+		if (passw) {
+			client.setRpl(RPL_WELCOME(user_id(client.getUserName(), client.getNickName()), client.getNickName()));
+			send(client.getSocket(), client.getRpl().c_str(), client.getRpl().size(), 0);
+			std::cout << client.getRpl() << std::endl;
+			client.setIrssi();
+			client.setVerif();
+		}
 	}
 	else
 		std::cerr << ERR_UNKNOWNCOMMAND(_name, client.getBuf()[0]) << std::endl;		
