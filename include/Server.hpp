@@ -37,6 +37,7 @@ class Server {
 
 		bool	_shutdown;
 
+
 	public:
 		~Server();
 		Server(int port, std::string pass);

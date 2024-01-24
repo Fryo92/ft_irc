@@ -24,8 +24,4 @@
 # define RPL_UMODEIS(client, mode) ":localhost 221 " + client + " " + mode + "\r\n"
 # define MODE_USERMSG(client, mode) ":" + client + " MODE " + client + " :" + mode + "\r\n"
 
-
-
-
-
 #endif

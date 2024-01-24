@@ -11,6 +11,8 @@ class Client
 {
 	private:
 		int _socket;
+		int	_id;
+
 		sockaddr_in _addr;
 
 		std::string _nickName;
@@ -18,6 +20,7 @@ class Client
 		std::string _host;
 		std::string _pass;
 		std::string _rpl;
+
 		std::vector<std::string>	_buf;
 
 		bool _invisible;
@@ -34,6 +37,7 @@ class Client
 		Client & operator=(Client const & cpy);
 
 		int			getSocket() {return _socket;};
+		int			getId() {return _id;};
 		std::string	&getNickName() {return _nickName;};
 		std::string	&getUserName() {return _userName;};
 		std::string	&getPass() {return _pass;};
@@ -45,7 +49,7 @@ class Client
 		bool		getDeco() {return _deco;};
 		std::vector<std::string>	&getBuf() {return _buf;};
 
-
+		void	setId(int i) {_id = i;};
 		void	setNickName(const std::string &nick) {_nickName = nick;};
 		void	setUserName(const std::string &user) {_userName = user;};
 		void	setPass(const std::string &pass) {_pass = pass;};

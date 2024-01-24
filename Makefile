@@ -46,12 +46,12 @@ $(OBJF)	:
 
 all		:	$(NAME)
 
-$(NAME)	:	$(OBJS) $(DEPEN)
+$(NAME)	:	$(OBJS)
 	@echo "$(YELLOW)COMPILING $(PROJECT)...$(DEF_COLOR)"
 	$(CC) $(FLAG) $(OBJS) $(INCLUDE) -o $(NAME)
 	@echo "$(GREEN)$(PROJECT) compiled!$(DEF_COLOR)"
 
-$(OBJ_DIR)%.o	:	$(SRC_DIR)%.cpp | $(OBJF)
+$(OBJ_DIR)%.o	:	$(SRC_DIR)%.cpp $(DEPEN) | $(OBJF)
 	$(CC) $(FLAG) $(INCLUDE) -c $< -o $@
 
 clean	:

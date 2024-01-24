@@ -74,10 +74,12 @@ void	Server::createClient(){
 	else {
 		if (_activeClients < MAX_CLIENTS){
 			Client client(clientSocket, clientAddr);
-			clientsManage[clientSocket] = client;
 			_activeClients++;
+			client.setId(_activeClients);
+			clientsManage[clientSocket] = client;
 			_fds[_activeClients].fd = clientSocket;
 			_fds[_activeClients].events = POLLIN;
+
 			send(clientSocket, "Welcome to IRC Server!\n", 23, 0);
 		} else {
 			std::cerr << "Max clients number reach" << std::endl;
@@ -95,9 +97,13 @@ void	Server::listenClient() {
 				buffer[bytesRead] = '\0';
 				clientsManage[_fds[i].fd].setBuf(buffer);
 				applyCommand(clientsManage[_fds[i].fd]);
-			} else {
+			}
+			else if (bytesRead == 0){
+				deleteClient(clientsManage[_fds[i].fd]);
+				i--;
+			}
+			else {
 				if (bytesRead < 0)
-                    std::cerr << "Error client " << i << " data" << std::endl;
 				deleteClient(clientsManage[_fds[i].fd]);
 				i--;
 			}
@@ -114,18 +120,14 @@ void	Server::listenClient() {
 }
 
 void	Server::deleteClient(Client client) {
-	int i = 1;
-	while (i <= _activeClients){
-		if (_fds[i].fd == client.getSocket())
-			break;
-		i++;	
+	std::map<int, Client>::iterator it = clientsManage.find(client.getSocket());
+	if (it != clientsManage.end()){		
+		close(client.getSocket());
+		std::cout << "Client " << client.getId() << " disconnected" << std::endl;
+		clientsManage.erase(it);
+		_activeClients--;
 	}
-	close(client.getSocket());
-	std::cout << "Client " << i - 1 << " disconnected" << std::endl;
-	clientsManage.erase(client.getSocket());
-	_activeClients--;
-
-	for (int j = i; j <= _activeClients; ++j)
+	for (int j = client.getId(); j <= _activeClients; ++j)
 		_fds[j] = _fds[j + 1];	
 }
 
