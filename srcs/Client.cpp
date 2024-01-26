@@ -10,17 +10,17 @@ Client::~Client(){
 }
 
 Client::Client(int sock, sockaddr_in addr) :_socket(sock), _id(0), _addr(addr), _host("localhost"), \
-	_invisible(false), _irssi(false), _verified(false) {
+	_invisible(false), _irssi(false), _verified(false), _deco(false) {
 
 }
 
 Client::Client(const Client& cpy) : _socket(cpy._socket), _id(cpy._id), _addr(cpy._addr),  _nickName(cpy._nickName), _userName(cpy._userName), \
 	_host(cpy._host), _pass(cpy._pass),_rpl(cpy._rpl), _buf(cpy._buf), \
-		_invisible(false), _irssi(false), _verified(false), _deco(cpy._deco){
+		_invisible(cpy._invisible), _irssi(cpy._irssi), _verified(cpy._verified), _deco(cpy._deco){
 
 }
 
-Client & Client::operator=(Client const & cpy){
+Client & Client::operator=(Client const & cpy) {
 	if (this != &cpy){
 		this->_socket = cpy._socket;
 		this->_id = cpy._id;

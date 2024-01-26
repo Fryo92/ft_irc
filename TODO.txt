@@ -1,0 +1,6 @@
+Verif key channel (join.cpp)
+Verif mode topic + is operator (topic.cpp)
+Commande MODE
+Commande INVITE
+Commande KICK
+Envoie de message

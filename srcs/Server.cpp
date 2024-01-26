@@ -8,10 +8,9 @@ Server::~Server(){
 
 }
 
-Server::Server(int port, std::string pass) : _port(port), _name("MyIRC"), _password(pass), _activeClients(0), _shutdown(false) {
+Server::Server(int port, std::string pass) : _port(port), _activeClients(0), _activeChannels(0), _name("MyIRC"), _password(pass), _shutdown(false) {
 	
-	for (size_t i = 0; i < _password.size(); i++)
-	{
+	for (size_t i = 0; i < _password.size(); i++) {
 		if (_password[i] == 32 || (_password[i] >= 9 && _password[i] <= 13))
 			throw (std::runtime_error("Invalid password."));
 	}
@@ -47,7 +46,7 @@ Server::Server(int port, std::string pass) : _port(port), _name("MyIRC"), _passw
 	_fds[0].fd = _socket;
 	_fds[0].events = POLLIN;
 	initCommands();
-	std::cout << _name << " server started on port " << _port << std::endl;
+	std::cout << WHITE_BOLD << _name << " server started on port " << _port << RESET << std::endl;
 }
 
 void	Server::process() {
@@ -70,7 +69,7 @@ void	Server::createClient(){
 	socklen_t clientSize = sizeof(sockaddr_in);
 	int clientSocket = accept(_socket, (sockaddr *)&clientAddr, &clientSize);
 	if (clientSocket == -1)
-	    std::cerr << "Error client connection" << std::endl;        
+	    std::cerr << RED << "Error client connection" << RESET << std::endl;        
 	else {
 		if (_activeClients < MAX_CLIENTS){
 			Client client(clientSocket, clientAddr);
@@ -82,7 +81,7 @@ void	Server::createClient(){
 
 			send(clientSocket, "Welcome to IRC Server!\n", 23, 0);
 		} else {
-			std::cerr << "Max clients number reach" << std::endl;
+			std::cerr << RED << "Max clients number reach" << RESET << std::endl;
 			close(clientSocket);
 		}
 	}
@@ -108,14 +107,13 @@ void	Server::listenClient() {
 				i--;
 			}
 		}
-		else if (_fds[i].revents & POLLOUT) {
-			if (clientsManage[_fds[i].fd].getDeco()){
-				clientsManage[_fds[i].fd].getBuf().clear();
-				deleteClient(clientsManage[_fds[i].fd]);
-				break;
-			}
-
-		}
+		// else if (_fds[i].revents & POLLOUT) {
+		// 	if (clientsManage[_fds[i].fd].getDeco()){
+		// 		clientsManage[_fds[i].fd].getBuf().clear();
+		// 		deleteClient(clientsManage[_fds[i].fd]);
+		// 		break;
+		// 	}
+		// }
 	}
 }
 
@@ -123,7 +121,7 @@ void	Server::deleteClient(Client client) {
 	std::map<int, Client>::iterator it = clientsManage.find(client.getSocket());
 	if (it != clientsManage.end()){		
 		close(client.getSocket());
-		std::cout << "Client " << client.getId() << " disconnected" << std::endl;
+		std::cout << CYAN << "Client " << client.getId() << " disconnected" << RESET << std::endl;
 		clientsManage.erase(it);
 		_activeClients--;
 	}
@@ -145,11 +143,11 @@ void	Server::cap(Client &client){
 		if (passw) {
 			client.setRpl(RPL_WELCOME(user_id(client.getUserName(), client.getNickName()), client.getNickName()));
 			send(client.getSocket(), client.getRpl().c_str(), client.getRpl().size(), 0);
-			std::cout << client.getRpl() << std::endl;
+			std::cout << GREEN << "Client " << client.getId() << " connected" << RESET << std::endl;
 			client.setIrssi();
 			client.setVerif();
 		}
 	}
 	else
-		std::cerr << ERR_UNKNOWNCOMMAND(_name, client.getBuf()[0]) << std::endl;		
+		std::cerr << RED << ERR_UNKNOWNCOMMAND(client.getBuf()[0]) << RESET << std::endl;		
 }

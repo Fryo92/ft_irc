@@ -1,7 +1,11 @@
 #include "Server.hpp"
 
 void	Server::nick(Client &client){
-	
+
+	if (client.getBuf().size() == 1) {
+		std::cerr << RED << ERR_NEEDMOREPARAMS(_name, client.getBuf()[0]) << RESET << std::endl;
+		return ;
+	}
 	std::string nickname;
 
 	for (size_t i = 1; i < client.getBuf().size(); i++){
@@ -9,10 +13,9 @@ void	Server::nick(Client &client){
 		if (i < client.getBuf().size() - 1)
 			nickname += " ";
 	}
-	if (client.getBuf().size() == 1)
-		std::cerr << ERR_NEEDMOREPARAMS(_name, client.getBuf()[0]) << std::endl;
-	else if (client.getBuf().size() > 2){
-		std::cerr << ERR_ERRONEUSNICKNAME(_name, nickname) << std::endl;
+	
+	if (client.getBuf().size() > 2){
+		std::cerr << RED << ERR_ERRONEUSNICKNAME(_name, nickname) << RESET << std::endl;
 	}
 	else if (!client.getPass().empty())
 	{
@@ -20,29 +23,29 @@ void	Server::nick(Client &client){
 		{
 			if (!isalnum(client.getBuf()[1][i]))
 			{
-				std::cerr << ERR_ERRONEUSNICKNAME(_name, nickname) << std::endl;
+				std::cerr << RED << ERR_ERRONEUSNICKNAME(_name, nickname) << RESET << std::endl;
 				client.getBuf().clear();
 				return ;
 			}
 		}
 		for (std::map<int, Client>::iterator ite = clientsManage.begin(); ite != clientsManage.end(); ite++)
 		{
+			if (nickname.size() > 9)
+				nickname = nickname.substr(0, 9);
 			if (nickname == ite->second.getNickName())
 			{
-				std::cerr << ERR_NICKNAMEINUSE(_name, nickname) << std::endl;
+				std::cerr << RED << ERR_NICKNAMEINUSE(_name, nickname) << RESET << std::endl;
 				client.getBuf().clear();
 				return ;
 			}
-		}
-		
-		if (client.getBuf()[1].size() > 9)
-			client.setNickName(client.getBuf()[1].substr (0,9));
-		else
-			client.setNickName(client.getBuf()[1]);
+		}	
+		std::string str = "Your nickname is now " + nickname + "\r\n";
+		client.setNickName(nickname);
+		send(client.getSocket(), str.c_str(), str.size(), 0);
 	}
 	else {
-		std::cerr << ERR_NOTREGISTERED(_name) << std::endl;
-		std::cerr << "Enter PASS, NICK, USER in this order" << std::endl;
+		std::cerr << RED << ERR_NOTREGISTERED(_name) << RESET << std::endl;
+		std::cerr << RED << "Enter PASS, NICK, USER in this order" << RESET <<std::endl;
 	}
 }
 

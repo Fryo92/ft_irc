@@ -6,6 +6,7 @@
 # include <netinet/in.h>
 # include <string>
 # include <stdexcept>
+# include "Channel.hpp"
 
 class Client
 {
@@ -23,6 +24,8 @@ class Client
 
 		std::vector<std::string>	_buf;
 
+		Channel 	_activeChannel;
+
 		bool _invisible;
 		bool _irssi;
 		bool _verified;
@@ -36,17 +39,18 @@ class Client
 
 		Client & operator=(Client const & cpy);
 
-		int			getSocket() {return _socket;};
-		int			getId() {return _id;};
-		std::string	&getNickName() {return _nickName;};
-		std::string	&getUserName() {return _userName;};
-		std::string	&getPass() {return _pass;};
-		std::string &getHost() {return _host;};
-		std::string &getRpl() {return _rpl;};
-		bool		getMode() {return _invisible;};
-		bool		getVerif() {return _verified;};
-		bool		getIrssi() {return _irssi;};
-		bool		getDeco() {return _deco;};
+		int			getSocket()  const {return _socket;};
+		int			getId()  const {return _id;};
+		std::string	getNickName() const {return _nickName;};
+		std::string	getUserName() const {return _userName;};
+		std::string	getPass() const {return _pass;};
+		std::string getHost() const {return _host;};
+		std::string getRpl() const {return _rpl;};
+		bool		getMode() const {return _invisible;};
+		bool		getVerif() const {return _verified;};
+		bool		getIrssi() const {return _irssi;};
+		bool		getDeco() const {return _deco;};
+		Channel		getChannel() const {return _activeChannel;};
 		std::vector<std::string>	&getBuf() {return _buf;};
 
 		void	setId(int i) {_id = i;};
@@ -58,6 +62,7 @@ class Client
 		void	setVerif();
 		void	setDeco() {_deco = true;};
 		void	setIrssi() {_irssi = true;};
+		void	setChannel(Channel &channel) {_activeChannel = channel;};
 		void	setBuf(const std::string &buffer);
 
 

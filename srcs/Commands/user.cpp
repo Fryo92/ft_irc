@@ -10,9 +10,9 @@ void	Server::user(Client &client){
 			user += " ";
 	}
 	if (client.getBuf().size() == 1)
-		std::cerr << ERR_NEEDMOREPARAMS(_name, client.getBuf()[0]) << std::endl;
+		std::cerr << RED << ERR_NEEDMOREPARAMS(_name, client.getBuf()[0]) << RESET << std::endl;
 	else if (client.getBuf().size() > 2){
-		std::cerr << ERR_ERRONEUSUSER(_name, user) << std::endl;
+		std::cerr << RED << ERR_ERRONEUSUSER(_name, user) << RESET << std::endl;
 	}
 	else if (client.getUserName().empty())
 	{
@@ -20,7 +20,7 @@ void	Server::user(Client &client){
 		{
 			if (!isalnum(client.getBuf()[1][i]))
 			{
-				std::cerr << ERR_ERRONEUSUSER(_name, user) << std::endl;
+				std::cerr << RED << ERR_ERRONEUSUSER(_name, user) << RESET << std::endl;
 				return ;
 			}
 		}	
@@ -28,13 +28,15 @@ void	Server::user(Client &client){
 		client.setVerif();
 		client.setRpl(RPL_WELCOME(user_id(client.getUserName(), client.getNickName()), client.getNickName()));
 		send(client.getSocket(), client.getRpl().c_str(), client.getRpl().size(), 0);
+		std::cout << GREEN << "Client " << client.getId() << " connected" << RESET << std::endl;
+
 	}
 	else if (client.getNickName().empty() || client.getPass().empty()){
-		std::cerr << ERR_NOTREGISTERED(_name) << std::endl;
-		std::cerr << "Enter PASS, NICK, USER in this order" << std::endl;
+		std::cerr << RED << ERR_NOTREGISTERED(_name) << RESET << std::endl;
+		std::cerr << RED << "Enter PASS, NICK, USER in this order" << RESET << std::endl;
 	}
 	else
-		std::cerr << ERR_ALREADYREGISTRED(_name) << std::endl;
+		std::cerr << RED << ERR_ALREADYREGISTRED(_name) << RESET << std::endl;
 }
 
 void	Server::userIrssi(Client &client, int i){

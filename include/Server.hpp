@@ -11,6 +11,7 @@
 # include <map>
 # include <sstream>
 # include "Client.hpp"
+# include "Channel.hpp"
 # include "utils.hpp"
 
 # define MAX_CLIENTS 5
@@ -21,22 +22,23 @@ class Server {
 
 		int	_socket;
 		int	_port;
+		int _pollRet;
+		int _activeClients;
+		int _activeChannels;
+
 		std::string _name;
 		std::string	_password;
+
 		sockaddr_in _addr;
 		socklen_t _size;
-
 		pollfd _fds[MAX_CLIENTS + 1];
-		int _pollRet;
-
-		int _activeClients;
-		std::map<int, Client> clientsManage;
 
 		typedef void (Server::*CommandFunction)(Client&);
     	std::map<std::string, CommandFunction> commands;
+		std::map<int, Client> clientsManage;
+		std::vector<Channel> _channelsList;
 
 		bool	_shutdown;
-
 
 	public:
 		~Server();
@@ -58,6 +60,8 @@ class Server {
 		void	mode(Client &client);
 		void	privmsg(Client &client);
 		void	quit(Client &client);
+		void	join(Client &client);
+		void	topic(Client &client);
 
 		void	nickIrssi(Client &client, int i);
 		void	userIrssi(Client &client, int i);

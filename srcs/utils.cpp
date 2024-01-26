@@ -20,6 +20,9 @@ void	Server::initCommands(){
 	commands["MODE"] = &Server::mode;
 	commands["PRIVMSG"] = &Server::privmsg;
 	commands["QUIT"] = &Server::quit;
+	commands["JOIN"] = &Server::join;
+	commands["TOPIC"] = &Server::topic;
+
 }
 
 void	Server::applyCommand(Client &client) {
@@ -27,6 +30,7 @@ void	Server::applyCommand(Client &client) {
 	if (it != commands.end())
 		(this->*(it->second))(client);
 	else
-		std::cerr << ERR_UNKNOWNCOMMAND(_name, client.getBuf()[0]) << std::endl;
-	client.getBuf().clear();
+		std::cerr << RED << ERR_UNKNOWNCOMMAND(client.getBuf()[0]) << RESET << std::endl;
+	if (!client.getDeco())
+		client.getBuf().clear();
 }
