@@ -44,5 +44,73 @@ void	Server::mode(Client &client) {
 			send(client.getSocket(), ret.c_str(), ret.size(), 0);
 		}
 	}
-
 }
+
+/*
+
+— i : Définir/supprimer le canal sur invitation uniquement -- /!\ au i du user != i du canal
+	if (client.getBuf()[2] == "+i" && client.getMode() == false)
+	{
+		client.setMode(true);
+		ret = MODE_CHANNELMSG(client.getChannel().getName(), "+i");
+		send(client.getSocket(), ret.c_str(), ret.size(), 0);
+	}
+	else if (client.getBuf()[2] == "-i" && client.getMode() == true)
+	{
+		client.setMode(false);
+		ret = MODE_CHANNELMSG(client.getChannel().getName(), "-i");
+		send(client.getSocket(), ret.c_str(), ret.size(), 0);
+	}
+
+
+— t : Définir/supprimer les restrictions de la commande TOPIC pour les opérateurs de canaux
+	if (client.getBuf()[2] == "+t" && client.getMode() == false)
+	{
+		client.setMode(true);
+		ret = MODE_CHANNELMSG(client.getChannel().getName(), "+t");
+		send(client.getSocket(), ret.c_str(), ret.size(), 0);
+	}
+	else if (client.getBuf()[2] == "-t" && client.getMode() == true)
+	{
+		client.setMode(false);
+		ret = MODE_CHANNELMSG(client.getChannel().getName(), "-t");
+		send(client.getSocket(), ret.c_str(), ret.size(), 0);
+	}
+
+
+— k : Définir/supprimer la clé du canal (mot de passe)
+	if (client.getBuf()[2] == "+k" && client.getMode() == false)
+	{
+		client.getChannel().setPass(mdp);
+		ret = MODE_CHANNELMSG(client.getChannel().getName(), "+k");
+		send(client.getSocket(), ret.c_str(), ret.size(), 0);
+	}
+	else if (client.getBuf()[2] == "-k" && client.getMode() == true)
+	{
+		client.getChannel().clear(le mdp);
+		ret = MODE_CHANNELMSG(client.getChannel().getName(), "-k");
+		send(client.getSocket(), ret.c_str(), ret.size(), 0);
+	}
+
+
+— o : Donner/retirer le privilège de l’opérateur de canal
+{
+
+
+	
+}
+
+— l : Définir/supprimer la limite d’utilisateurs pour le canal
+	if (client.getBuf()[2] == "+l" && client.getMode() == false)
+	{
+		client.getChannel().setL(l);
+		ret = MODE_CHANNELMSG(client.getChannel().getName(), "+l");
+		send(client.getSocket(), ret.c_str(), ret.size(), 0);
+	}
+	else if (client.getBuf()[2] == "-l" && client.getMode() == true)
+	{
+		client.getChannel().setL(0);
+		ret = MODE_CHANNELMSG(client.getChannel().getName(), "-l");
+		send(client.getSocket(), ret.c_str(), ret.size(), 0);
+	}
+*/

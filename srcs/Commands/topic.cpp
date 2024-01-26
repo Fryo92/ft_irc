@@ -14,6 +14,15 @@ void	Server::topic(Client &client) {
 	}
 	else
 	{
+		// if (client.getChannel().getT() == true){
+		// 	for (size_t i = 0; i < client.getChannel().getOperator().size(); i++){
+		// 		if (client.getNickName() == client.getChannel().getOperator()[i])
+		// 			break ;
+		// 	}
+		// 	std::string err = ERR_CHANOPRIVSNEEDED(client.getChannel().getName());
+		// 	send(client.getSocket(), err.c_str(), err.size(), 0);
+		// 	return ;
+		// }
 		std::string topic;
 
 		for (size_t i = 1; i < client.getBuf().size(); i++){

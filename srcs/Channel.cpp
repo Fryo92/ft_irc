@@ -6,7 +6,8 @@ Channel::Channel() {
 
 Channel::Channel(std::string name, std::string owner) : _name(name), _owner(owner), \
 		_i(false), _t(false), _l(0) {
-
+	
+	_operator.push_back(_owner);
 }
 
 Channel::Channel(const Channel& cpy) : _name(cpy._name), _topic(cpy._topic), _owner(cpy._owner), \
@@ -31,5 +32,4 @@ Channel &Channel::operator=(Channel const & cpy) {
 		this->_users = cpy._users;
 	}
 	return *this;
-
 }

@@ -26,6 +26,8 @@
 # define ERR_CHANNELISFULL(channel) ":localhost 471 " + channel + " :Cannot join channel (+l)"
 # define ERR_UNKNOWNMODE(host, ch) host + " 472 " + ch + " :is unknown mode char to me"
 # define ERR_INVITEONLYCHAN(channel) ":localhost 473 " + channel + " :Cannot join channel (+i)"
+# define ERR_BADCHANNELKEY(channel) ":localhost 475 " + channel + " :Cannot join channel (+k)"
+# define ERR_CHANOPRIVSNEEDED(channel) ":localhost 482 " + channel + " :You're not channel operator"
 # define ERR_USERSDONTMATCH(host) host + " 502 :Cant change mode for other users"
 # define ERR_ERRONEUSUSER(host, user) host + " " + user + " :Erroneus user"
 

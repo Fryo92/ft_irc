@@ -1,5 +1,21 @@
 #include "Server.hpp"
 
+// int		check_chanpswd(Client &client, Channel &channel)
+// {
+// 	if (!channel.getPass().empty())
+// 	{
+// 		if (!client.getBuf()[2].empty())
+// 		{
+// 			if (client.getBuf()[2] == channel.getPass())
+// 				return 0;
+// 			else
+// 				return 1;
+// 		}
+// 		return 1;
+// 	}
+// 	return 0;
+// }
+
 void	joinChannel(Client &client, Channel &channel) {
 	if (channel.getL() != 0 && channel.getUsers().size() >= channel.getL()) {
 		std::string err = ERR_CHANNELISFULL(channel.getName());
@@ -11,17 +27,22 @@ void	joinChannel(Client &client, Channel &channel) {
 		int i = 0;
 		for	(size_t i = 0; i < channel.getInvite().size(); i++)
 		{
-			if (client.getNickName() == channel.getInvite()[i]){
+			if (client.getNickName() == channel.getInvite()[i]) {
 				i = 1;
 				break ;
 			}
 		}
-		if (i == 0){
+		if (i == 0) {
 			std::string err = ERR_INVITEONLYCHAN(channel.getName());
 			send(client.getSocket(), err.c_str(), err.size(), 0);
 			return ;
 		}
 	}
+	// if (check_chanpswd(client, channel)) {
+	// 	std::string err = ERR_BADCHANNELKEY(channel.getName());
+	// 	send(client.getSocket(), err.c_str(), err.size(), 0);
+	// 	return ;
+	// }
 	channel.getUsers().push_back(client.getNickName());
 	std::string rpl;
 	if (channel.getTopic().size() > 0)
@@ -41,6 +62,11 @@ void	Server::join(Client& client) {
 
 	std::string channelName;
 
+	// for (size_t i = 1; i < client.getBuf().size() - 1; i++){
+	// 	channelName += client.getBuf()[i];
+	// 	if (i < client.getBuf().size() - 2)
+	// 		channelName += " ";
+	// }
 	for (size_t i = 1; i < client.getBuf().size(); i++){
 		channelName += client.getBuf()[i];
 		if (i < client.getBuf().size() - 1)
