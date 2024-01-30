@@ -1,5 +1,20 @@
 #include "Server.hpp"
 
+int	Server::is_op(Client &client)
+{
+	if (client.getCommandchannel().getT() == true){
+		for (size_t i = 0; i < client.getCommandchannel().getOperator().size(); i++){
+			if (client.getCommandchannel().getOperator()[i] == client.getNickName())
+					return 1;
+		}
+		std::string err = ERR_CHANOPRIVSNEEDED(client.getCommandchannel().getName());
+		send(client.getSocket(), err.c_str(), err.size(), 0);
+		return -1;
+	}
+	return 1;
+}
+
+
 std::string	Server::ft_toupper(std::string &str){
 	for (size_t i = 0; i < str.size(); i++)
 		str[i] = std::toupper(str[i]);

@@ -30,6 +30,8 @@
 # define ERR_CHANOPRIVSNEEDED(channel) ":localhost 482 " + channel + " :You're not channel operator"
 # define ERR_USERSDONTMATCH(host) host + " 502 :Cant change mode for other users"
 # define ERR_ERRONEUSUSER(host, user) host + " " + user + " :Erroneus user"
+# define ERR_BADPASS(host) host + " :Bad Password"
+# define ERR_BADMODEL(host) host + " :Bad L mode size"
 
 # define RPL_WELCOME(user_id, nick) ":localhost 001 " + nick + " :Welcome to the Internet Relay Network " + user_id + "\r\n"
 # define RPL_QUIT(user_id, reason) user_id + " QUIT :Quit: " + reason + "\r\n"
@@ -37,5 +39,6 @@
 # define RPL_NOTOPIC(user_id, channel) user_id + ":localhost 331 " + channel + " :No topic is set\r\n"
 # define RPL_TOPIC(user_id, channel, topic) user_id + ":localhost 332 " + channel + " :" + topic + "\r\n"
 # define MODE_USERMSG(client, mode) ":" + client + " MODE " + client + " :" + mode + "\r\n"
+# define MODE_CHANNELMSG(channel, mode) ":" + channel + " MODE " + channel + " :" + mode + "\r\n"
 
 #endif

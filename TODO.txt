@@ -1,5 +1,5 @@
 #######Verif key channel (join.cpp) ---- ecrit pour join un channel, a tester
-#######Verif mode topic + is operator (topic.cpp) ---- ecrit, a tester
+#######Verif mode topic + is operator (topic.cpp) ---- a tester
 #######segfault si dans un channel disco -> try to reco 
 
 

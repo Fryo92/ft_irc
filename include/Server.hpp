@@ -69,6 +69,7 @@ class Server {
 
 		int	searchClientChannel(Client client);
 		std::string	ft_toupper(std::string &str);
+		int		is_op(Client &client);
 
 };
 

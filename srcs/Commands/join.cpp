@@ -1,20 +1,20 @@
 #include "Server.hpp"
 
-// int		check_chanpswd(Client &client, Channel &channel)
-// {
-// 	if (!channel.getPass().empty())
-// 	{
-// 		if (!client.getBuf()[2].empty())
-// 		{
-// 			if (client.getBuf()[2] == channel.getPass())
-// 				return 0;
-// 			else
-// 				return 1;
-// 		}
-// 		return 1;
-// 	}
-// 	return 0;
-// }
+int		check_chanpswd(Client &client, Channel &channel)
+{
+	if (!channel.getPass().empty())
+	{
+		if (!client.getBuf()[2].empty())
+		{
+			if (client.getBuf()[2] == channel.getPass())
+				return 0;
+			else
+				return 1;
+		}
+		return 1;
+	}
+	return 0;
+}
 
 void	joinChannel(Client &client, Channel &channel) {
 	if (channel.getL() != 0 && channel.getUsers().size() >= channel.getL()) {
@@ -38,11 +38,11 @@ void	joinChannel(Client &client, Channel &channel) {
 			return ;
 		}
 	}
-	// if (check_chanpswd(client, channel)) {
-	// 	std::string err = ERR_BADCHANNELKEY(channel.getName());
-	// 	send(client.getSocket(), err.c_str(), err.size(), 0);
-	// 	return ;
-	// }
+	if (check_chanpswd(client, channel)) {
+		std::string err = ERR_BADCHANNELKEY(channel.getName());
+		send(client.getSocket(), err.c_str(), err.size(), 0);
+		return ;
+	}
 	channel.getUsers().push_back(client.getNickName());
 	std::string rpl;
 	if (channel.getTopic().size() > 0)
@@ -60,28 +60,14 @@ void	Server::join(Client& client) {
 		return ;
 	}
 
-	std::string channelName;
+	std::string channelName = client.getBuf()[1];
+	std::string password = client.getBuf()[2];
 
-	// for (size_t i = 1; i < client.getBuf().size() - 1; i++){
-	// 	channelName += client.getBuf()[i];
-	// 	if (i < client.getBuf().size() - 2)
-	// 		channelName += " ";
-	// }
-	for (size_t i = 1; i < client.getBuf().size(); i++){
-		channelName += client.getBuf()[i];
-		if (i < client.getBuf().size() - 1)
-			channelName += " ";
-	}
 	if (channelName[0] != '#' && channelName[0] != '&' && channelName[0] != '1')
 		channelName.insert(0, "#");
 
 	if (channelName.find(',') != std::string::npos || channelName.find(' ') != std::string::npos){
-		std::cerr << RED << ERR_NOSUCHCHANNEL(channelName) << RESET << std::endl;
-		return ;
-	}
-
-	if (client.getBuf().size() > 2) {
-		std::cerr << RED << ERR_NOSUCHCHANNEL(channelName) << RESET << std::endl;
+		std::cerr << RED << (channelName) << RESET << std::endl;
 		return ;
 	}
 
@@ -89,10 +75,20 @@ void	Server::join(Client& client) {
 	{
 		if (channelName == _channelsList[i].getName())
 		{
+			if (client.getBuf().size() > 3) {
+				std::string err = ERR_BADCHANNELKEY(_channelsList[i].getName());
+				send(client.getSocket(), err.c_str(), err.size(), 0);
+				return ;
+			}
 			joinChannel(client, _channelsList[i]);
-			break ;
+			return ;
 		}
 	}
+	if (client.getBuf().size() > 3) {
+		std::string err = ERR_BADPASS(_name);
+		send(client.getSocket(), err.c_str(), err.size(), 0);
+		return ;
+	}	
 	if (channelName.size() > 32)
 		channelName = channelName.substr(0, 32);
 
