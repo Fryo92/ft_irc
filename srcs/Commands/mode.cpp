@@ -82,6 +82,7 @@ void	Server::mode(Client &client) {
 	if (client.getBuf()[2] == "+k" && client.getMode() == false)
 	{
 		client.getChannel().setPass(mdp);
+		if ()
 		ret = MODE_CHANNELMSG(client.getChannel().getName(), "+k");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}

@@ -3,10 +3,14 @@
 
 void	Server::pass(Client &client){
 	
-	if (client.getBuf().size() == 1)
+	if (client.getBuf().size() == 1) {
 		std::cerr << RED << ERR_NEEDMOREPARAMS(_name, client.getBuf()[0]) << RESET << std::endl;
-	else if (client.getBuf().size() > 2)
+		return;
+	}
+	else if (client.getBuf().size() > 2) {
 		std::cerr << RED << ERR_PASSWDMISMATCH(_name) << RESET << std::endl;
+		return ;
+	}
 	else if (client.getPass().empty())
 	{
 		if (client.getBuf()[1].compare(_password))
@@ -16,8 +20,10 @@ void	Server::pass(Client &client){
 			deleteClient(client);
 			return ;
 		}
-		else 
+		else {
 			client.setPass(client.getBuf()[1]);
+			return ;
+		}
 	}
 	else
 		std::cerr<< RED << ERR_ALREADYREGISTRED(_name) << RESET << std::endl;

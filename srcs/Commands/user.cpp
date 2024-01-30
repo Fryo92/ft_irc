@@ -9,12 +9,26 @@ void	Server::user(Client &client){
 		if (i < client.getBuf().size() - 1)
 			user += " ";
 	}
-	if (client.getBuf().size() == 1)
+
+	if (client.getNickName().empty() || client.getPass().empty()){
+		std::cerr << RED << ERR_NOTREGISTERED(_name) << RESET << std::endl;
+		std::cerr << RED << "Enter PASS, NICK, USER in this order" << RESET << std::endl;
+		return;
+	}
+	else if (client.getBuf().size() == 1){
 		std::cerr << RED << ERR_NEEDMOREPARAMS(_name, client.getBuf()[0]) << RESET << std::endl;
+		return;
+	}
 	else if (client.getBuf().size() > 2){
 		std::cerr << RED << ERR_ERRONEUSUSER(_name, user) << RESET << std::endl;
+		return;
 	}
-	else if (client.getUserName().empty())
+	else if (client.getUserName().empty() == false){
+		std::cerr << RED << ERR_ALREADYREGISTRED(_name) << RESET << std::endl;
+		std::cout << client.getUserName() << " | " << client.getUserName().size() << std::endl; 
+		return;
+	}
+	else
 	{
 		for (size_t i = 0; i < client.getBuf()[1].size(); i++)
 		{
@@ -23,20 +37,19 @@ void	Server::user(Client &client){
 				std::cerr << RED << ERR_ERRONEUSUSER(_name, user) << RESET << std::endl;
 				return ;
 			}
-		}	
-		client.setUserName(client.getBuf()[1]);
-		client.setVerif();
-		client.setRpl(RPL_WELCOME(user_id(client.getUserName(), client.getNickName()), client.getNickName()));
-		send(client.getSocket(), client.getRpl().c_str(), client.getRpl().size(), 0);
-		std::cout << GREEN << "Client " << client.getId() << " connected" << RESET << std::endl;
-
+		}
+		if (client.getConnected() == 1){
+			client.setUserName(client.getBuf()[1]);
+			client.setConnected(2);
+			std::cout << GREEN << "Client " << client.getId() << " connected" << RESET << std::endl;
+		}
+		else if (client.getConnected() == 0){
+			client.setRpl(RPL_WELCOME(user_id(user, client.getNickName()), client.getNickName()));
+			send(client.getSocket(), client.getRpl().c_str(), client.getRpl().size(), 0);
+			client.setConnected(1);
+		}
+		return ;
 	}
-	else if (client.getNickName().empty() || client.getPass().empty()){
-		std::cerr << RED << ERR_NOTREGISTERED(_name) << RESET << std::endl;
-		std::cerr << RED << "Enter PASS, NICK, USER in this order" << RESET << std::endl;
-	}
-	else
-		std::cerr << RED << ERR_ALREADYREGISTRED(_name) << RESET << std::endl;
 }
 
 void	Server::userIrssi(Client &client, int i){

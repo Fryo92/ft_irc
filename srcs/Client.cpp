@@ -45,8 +45,9 @@ void	Client::setBuf(const std::string &buffer)
 	std::istringstream iss(buffer);
     std::string token;
 
-    while (iss >> token)
+    while (iss >> token) {
 		_buf.push_back(token);
+	}
 }
 
 void	Client::setVerif(){
