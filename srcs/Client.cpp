@@ -40,7 +40,7 @@ Client & Client::operator=(Client const & cpy) {
 }
 
 
-void	Client::setBuf(const std::string &buffer)
+void	Client::setBuf(const std::string buffer)
 {
 	std::istringstream iss(buffer);
     std::string token;

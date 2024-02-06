@@ -95,7 +95,10 @@ void	Server::listenClient() {
 			if (bytesRead > 0) {
 				buffer[bytesRead] = '\0';
 				clientsManage[_fds[i].fd].setBuf(buffer);
-				applyCommand(clientsManage[_fds[i].fd]);
+				if (strstr(buffer, "\r\n")) {
+					applyCommand(clientsManage[_fds[i].fd]);
+					clientsManage[_fds[i].fd].getBuf().clear();
+				}
 			}
 			else if (bytesRead == 0){
 				deleteClient(clientsManage[_fds[i].fd]);

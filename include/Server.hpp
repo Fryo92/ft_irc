@@ -67,9 +67,10 @@ class Server {
 		void	userIrssi(Client &client, int i);
 		bool	passIrssi(Client &client, int i);
 
-		int	searchClientChannel(Client client);
-		std::string	ft_toupper(std::string &str);
-		int		is_op(Client &client);
+		std::string	ft_toupper(std::string str);
+		int		searchClientChannel(Client &client);
+		int		is_op(Client &client, std::string nickname);
+		int		operator_mode(Client &client)
 
 };
 

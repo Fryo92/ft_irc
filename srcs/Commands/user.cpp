@@ -25,7 +25,6 @@ void	Server::user(Client &client){
 	}
 	else if (client.getUserName().empty() == false){
 		std::cerr << RED << ERR_ALREADYREGISTRED(_name) << RESET << std::endl;
-		std::cout << client.getUserName() << " | " << client.getUserName().size() << std::endl; 
 		return;
 	}
 	else
@@ -38,16 +37,10 @@ void	Server::user(Client &client){
 				return ;
 			}
 		}
-		if (client.getConnected() == 1){
-			client.setUserName(client.getBuf()[1]);
-			client.setConnected(2);
-			std::cout << GREEN << "Client " << client.getId() << " connected" << RESET << std::endl;
-		}
-		else if (client.getConnected() == 0){
-			client.setRpl(RPL_WELCOME(user_id(user, client.getNickName()), client.getNickName()));
-			send(client.getSocket(), client.getRpl().c_str(), client.getRpl().size(), 0);
-			client.setConnected(1);
-		}
+		client.setUserName(client.getBuf()[1]);
+		std::cout << GREEN << "Client " << client.getId() << " connected" << RESET << std::endl;
+		client.setRpl(RPL_WELCOME(user_id(user, client.getNickName()), client.getNickName()));
+		send(client.getSocket(), client.getRpl().c_str(), client.getRpl().size(), 0);
 		return ;
 	}
 }

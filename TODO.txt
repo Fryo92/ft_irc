@@ -1,9 +1,9 @@
-#######Verif key channel (join.cpp) ---- ecrit pour join un channel, a tester
+#######Verif key channel (join.cpp) ---- a tester
 #######Verif mode topic + is operator (topic.cpp) ---- a tester
 #######segfault si dans un channel disco -> try to reco 
 
 
-Commande MODE  ---- theoriquement ecrits sauf -o, a implementer + tester
+Commande MODE  ---- sauf -o, a tester
 Commande INVITE
 Commande KICK
 Envoie de message

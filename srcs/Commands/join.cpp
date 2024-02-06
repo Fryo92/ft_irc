@@ -61,7 +61,8 @@ void	Server::join(Client& client) {
 	}
 
 	std::string channelName = client.getBuf()[1];
-	std::string password = client.getBuf()[2];
+	if (client.getBuf().size() > 2)
+		std::string password = client.getBuf()[2];
 
 	if (channelName[0] != '#' && channelName[0] != '&' && channelName[0] != '1')
 		channelName.insert(0, "#");

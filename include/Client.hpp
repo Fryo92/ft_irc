@@ -13,7 +13,6 @@ class Client
 	private:
 		int _socket;
 		int	_id;
-		int	_connected;
 
 
 		sockaddr_in _addr;
@@ -44,7 +43,6 @@ class Client
 
 		int			getSocket()  const {return _socket;};
 		int			getId()  const {return _id;};
-		int			getConnected()  const {return _connected;};
 		std::string	getNickName() const {return _nickName;};
 		std::string	getUserName() const {return _userName;};
 		std::string	getPass() const {return _pass;};
@@ -59,7 +57,6 @@ class Client
 		std::vector<std::string>	&getBuf() {return _buf;};
 
 		void	setId(int i) {_id = i;};
-		void	setConnected(int i) {_connected = i;};
 		void	setNickName(const std::string &nick) {_nickName = nick;};
 		void	setUserName(const std::string &user) {_userName = user;};
 		void	setPass(const std::string &pass) {_pass = pass;};
@@ -70,7 +67,7 @@ class Client
 		void	setIrssi() {_irssi = true;};
 		void	setChannel(Channel &channel) {_activeChannel = channel;};
 		void	setCommandchannel(Channel &channel) {_commandChannel = channel;};
-		void	setBuf(const std::string &buffer);
+		void	setBuf(const std::string buffer);
 
 
 };
