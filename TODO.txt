@@ -3,7 +3,7 @@
 #######segfault si dans un channel disco -> try to reco 
 
 
-Commande MODE  ---- sauf -o, a tester
-Commande INVITE
-Commande KICK
-Envoie de message
+Commande MODE  ----  a tester
+Commande INVITE --- a tester
+Commande KICK --- a tester
+Envoie de message --- WIP

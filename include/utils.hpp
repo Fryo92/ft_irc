@@ -19,6 +19,8 @@
 # define ERR_NONICKNAMEGIVEN(host) host + " 431 :No nick name given"
 # define ERR_ERRONEUSNICKNAME(host, nickname) host + " 432 " + nickname + " :Erroneus nickname"
 # define ERR_NICKNAMEINUSE(host, nickname) host + " 433 " + nickname + " :Nickname is already in use"
+# define ERR_NOTONCHANNEL(channel) ":localhost 442 " + channel + " :You're not on that channel"
+# define ERR_USERONCHANNEL(nickname, channel) ":localhost 443 " + nickname + " " + channel + " :is already on channel"
 # define ERR_NOTREGISTERED(host) host + " 451 :You have not registered"
 # define ERR_NEEDMOREPARAMS(host, command) host + " 461 " + command + " :Not enough parameters"
 # define ERR_ALREADYREGISTRED(host) host + " 462 :You may not reregister"
@@ -38,6 +40,7 @@
 # define RPL_UMODEIS(client, mode) ":localhost 221 " + client + " " + mode + "\r\n"
 # define RPL_NOTOPIC(user_id, channel) user_id + ":localhost 331 " + channel + " :No topic is set\r\n"
 # define RPL_TOPIC(user_id, channel, topic) user_id + ":localhost 332 " + channel + " :" + topic + "\r\n"
+# define RPL_INVITING(channel, nickname) channel + " " + nickname + "\r\n"
 # define MODE_USERMSG(client, mode) ":" + client + " MODE " + client + " :" + mode + "\r\n"
 # define MODE_CHANNELMSG(channel, mode) ":" + channel + " MODE " + channel + " :" + mode + "\r\n"
 

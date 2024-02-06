@@ -1,8 +1,6 @@
 #include "Server.hpp"
 #include "utils.hpp"
 
-int	
-
 int	searchMode(std::string *tab, std::string search, int size){
 	for (int i = 0; i < size; i++){
 		if (search == tab[i])
@@ -44,15 +42,15 @@ void	invisible_mode(Client &client){
 
 void	invite_mode(Client &client){
 	std::string ret;
-	if (client.getBuf()[2] == "+i" && client.getCommandchannel().getI() == false)
+	if (client.getBuf()[2] == "+i" && client.getChannel().getI() == false)
 	{
-		client.getCommandchannel().setI(true);
+		client.getChannel().setI(true);
 		ret = MODE_CHANNELMSG(client.getChannel().getName(), "+i");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
-	else if (client.getBuf()[2] == "-i" && client.getCommandchannel().getI() == true)
+	else if (client.getBuf()[2] == "-i" && client.getChannel().getI() == true)
 	{
-		client.getCommandchannel().setI(false);
+		client.getChannel().setI(false);
 		ret = MODE_CHANNELMSG(client.getChannel().getName(), "-i");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
@@ -60,15 +58,15 @@ void	invite_mode(Client &client){
 
 void	topic_mode(Client &client){
 	std::string ret;
-	if (client.getBuf()[2] == "+t" && client.getCommandchannel().getT() == false)
+	if (client.getBuf()[2] == "+t" && client.getChannel().getT() == false)
 	{
-		client.getCommandchannel().setT(true);
+		client.getChannel().setT(true);
 		ret = MODE_CHANNELMSG(client.getChannel().getName(), "+t");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
-	else if (client.getBuf()[2] == "-t" && client.getCommandchannel().getT() == true)
+	else if (client.getBuf()[2] == "-t" && client.getChannel().getT() == true)
 	{
-		client.getCommandchannel().setT(false);
+		client.getChannel().setT(false);
 		ret = MODE_CHANNELMSG(client.getChannel().getName(), "-t");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
@@ -79,7 +77,7 @@ int	key_mode(Client &client){
 	if (client.getBuf()[2] == "+k")
 	{
 		if (client.getBuf().size() == 4)
-			client.getCommandchannel().setPass(client.getBuf()[3]);
+			client.getChannel().setPass(client.getBuf()[3]);
 		else if (client.getBuf().size() > 4) {
 			ret = ERR_BADPASS(client.getHost());
 			send(client.getSocket(), ret.c_str(), ret.size(), 0);
@@ -96,7 +94,7 @@ int	key_mode(Client &client){
 	}
 	else if (client.getBuf()[2] == "-k")
 	{
-		client.getCommandchannel().getPass().clear();
+		client.getChannel().getPass().clear();
 		ret = MODE_CHANNELMSG(client.getChannel().getName(), "-k");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
@@ -135,12 +133,12 @@ int	max_client_mode(Client &client){
 
 int	Server::operator_mode(Client &client){
 	std::string ret;
-	if (client.getBuf()[2] == "+o" && is_op(client, client.getBuf()[3]))
+	if (client.getBuf()[2] == "+o" && is_op(client, client.getBuf()[3]) == -1)
 	{
 		if (client.getBuf().size() > 3){
-			for (size_t i = 0; i < client.getCommandchannel().getUsers().size(); i++)
+			for (size_t i = 0; i < client.getChannel().getUsers().size(); i++)
 			{
-				if (client.getBuf()[3] ==  client.getCommandchannel().getUsers()[i])
+				if (client.getBuf()[3] ==  client.getChannel().getUsers()[i])
 				{
 					client.getChannel().getOperator().push_back(client.getBuf()[3]);
 					ret = MODE_CHANNELMSG(client.getChannel().getName(), "+o");
@@ -158,18 +156,11 @@ int	Server::operator_mode(Client &client){
 			return 1;
 		}
 	}
-	else if (client.getBuf()[2] == "-o" && client.getMode() == true)
-	{
-		for (int ite = 0; ite < client.getChannel().getOperator().size(); ite++)
-		{
-			for (int i = 0; i < client.getChannel().getUsers().size(); i++)
-			{
-			}
-			
+	else if (client.getBuf()[2] == "-o" && is_op(client, client.getBuf()[3]) == 1) {
+		for (std::vector<std::string>::iterator ite = client.getChannel().getOperator().begin(); ite != client.getChannel().getOperator().end(); ite++) {
+			if (client.getBuf()[3] == *ite)
+				client.getChannel().getOperator().erase(ite);
 		}
-		
-		ret = MODE_CHANNELMSG(client.getChannel().getName(), "-o");
-		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
 	return 0;
 }
@@ -194,11 +185,13 @@ void	Server::mode(Client &client) {
 			if (_channelsList[ite].getName() == client.getBuf()[1])
 				i = ite;
 		}
-		client.setCommandchannel(_channelsList[i]);
-
-		if (is_op(client, client.getNickName()) == -1)
-				return ;
-		std::string ret;
+		if (is_on_channel(client, client.getBuf()[1]))
+			return ;
+		if (is_op(client, client.getNickName()) == -1){
+			std::string err = ERR_CHANOPRIVSNEEDED(client.getChannel().getName());
+			send(client.getSocket(), err.c_str(), err.size(), 0);
+			return ;
+		}
 		if (client.getBuf()[2] == "+i" || client.getBuf()[2] == "-i")
 			invite_mode(client);
 

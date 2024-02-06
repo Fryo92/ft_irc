@@ -62,6 +62,8 @@ class Server {
 		void	quit(Client &client);
 		void	join(Client &client);
 		void	topic(Client &client);
+		void	invite(Client &client);
+		void	kick(Client &client);
 
 		void	nickIrssi(Client &client, int i);
 		void	userIrssi(Client &client, int i);
@@ -70,7 +72,8 @@ class Server {
 		std::string	ft_toupper(std::string str);
 		int		searchClientChannel(Client &client);
 		int		is_op(Client &client, std::string nickname);
-		int		operator_mode(Client &client)
+		int		operator_mode(Client &client);
+		int		is_on_channel(Client &client, std::string channel);
 
 };
 

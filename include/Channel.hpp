@@ -36,9 +36,9 @@ class Channel
 		bool	getI() const {return _i;};
 		bool	getT() const {return _t;};
 		size_t	getL() const {return _l;};
-		std::vector<std::string>	getOperator() {return _operator;};
-		std::vector<std::string>	getInvite() {return _invite;};
-		std::vector<std::string>	getUsers() {return _users;};
+		std::vector<std::string>	&getOperator() {return _operator;};
+		std::vector<std::string>	&getInvite() {return _invite;};
+		std::vector<std::string>	&getUsers() {return _users;};
 
 		void	setName(std::string str) {_name = str;};
 		void	setTopic(std::string str) {_topic = str;};

@@ -2,17 +2,23 @@
 
 int	Server::is_op(Client &client, std::string nickname)
 {
-	if (client.getCommandchannel().getOwner() == nickname)
+	if (client.getChannel().getOwner() == nickname)
 		return 1;
-	for (size_t i = 0; i < client.getCommandchannel().getOperator().size(); i++){
-		if (client.getCommandchannel().getOperator()[i] == nickname)
+	for (size_t i = 0; i < client.getChannel().getOperator().size(); i++){
+		if (client.getChannel().getOperator()[i] == nickname)
 				return 1;
 	}
-	std::string err = ERR_CHANOPRIVSNEEDED(client.getCommandchannel().getName());
-	send(client.getSocket(), err.c_str(), err.size(), 0);
 	return -1;
 }
 
+int	Server::is_on_channel(Client &client, std::string channel){
+	if (channel != client.getChannel().getName()) {
+		std::string err = ERR_NOTONCHANNEL(channel);
+		send(client.getSocket(), err.c_str(), err.size(), 0);
+		return 1;
+	}
+	return 0;
+}
 
 std::string	Server::ft_toupper(std::string str){
 	for (size_t i = 0; i < str.size(); i++)

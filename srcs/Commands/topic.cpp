@@ -15,7 +15,7 @@ void	Server::topic(Client &client) {
 	else
 	{
 		if (client.getCommandchannel().getT() == true) {
-			if (is_op(client) == -1)
+			if (is_op(client, client.getNickName()) == -1)
 				return ;
 		}
 		
