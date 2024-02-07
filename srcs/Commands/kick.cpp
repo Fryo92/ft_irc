@@ -1,7 +1,7 @@
 #include "Server.hpp"
 #include "utils.hpp"
 
-void	Server::kick(Client &client){
+void	Server::kick(Client &client) {
 	std::string err;
 	if (client.getBuf().size() < 3) {
 		err = ERR_NEEDMOREPARAMS(client.getHost(), client.getBuf()[0]);
@@ -25,3 +25,4 @@ void	Server::kick(Client &client){
 			client.getChannel().getUsers().erase(ite);
 	}
 }
+

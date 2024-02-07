@@ -11,7 +11,7 @@ int	Server::is_op(Client &client, std::string nickname)
 	return -1;
 }
 
-int	Server::is_on_channel(Client &client, std::string channel){
+int	Server::is_on_channel(Client &client, std::string channel) {
 	if (channel != client.getChannel().getName()) {
 		std::string err = ERR_NOTONCHANNEL(channel);
 		send(client.getSocket(), err.c_str(), err.size(), 0);
@@ -20,18 +20,18 @@ int	Server::is_on_channel(Client &client, std::string channel){
 	return 0;
 }
 
-std::string	Server::ft_toupper(std::string str){
+std::string	Server::ft_toupper(std::string str) {
 	for (size_t i = 0; i < str.size(); i++)
 		str[i] = std::toupper(str[i]);
 	return (str);	
 }
 
-void	Server::closeSocket(){
+void	Server::closeSocket() {
 	for (int i = 0; i <= _activeClients; i++)
 		close(_fds[i].fd);
 }
 
-void	Server::initCommands(){
+void	Server::initCommands() {
 	commands["CAP"] = &Server::cap;
 	commands["NICK"] = &Server::nick;
 	commands["PASS"] = &Server::pass;
@@ -42,7 +42,8 @@ void	Server::initCommands(){
 	commands["QUIT"] = &Server::quit;
 	commands["JOIN"] = &Server::join;
 	commands["TOPIC"] = &Server::topic;
-
+	commands["KICK"] = &Server::kick;
+	commands["INVITE"] = &Server::invite;
 }
 
 void	Server::applyCommand(Client &client) {

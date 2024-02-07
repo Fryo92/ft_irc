@@ -28,7 +28,7 @@ FILES	=	main \
 			Server Client utils Channel \
 			Commands/nick Commands/pass Commands/user Commands/pong \
 			Commands/mode Commands/privmsg Commands/quit Commands/join \
-			Commands/topic
+			Commands/topic Commands/kick Commands/invite 
 
 SRCS	=	$(addprefix $(SRC_DIR), $(addsuffix .cpp, $(FILES)))
 OBJS	=	$(addprefix $(OBJ_DIR), $(addsuffix .o, $(FILES)))

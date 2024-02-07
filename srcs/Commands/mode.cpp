@@ -215,9 +215,3 @@ void	Server::mode(Client &client) {
 		}
 	}
 }
-
-/*
-
-— i : Définir/supprimer le canal sur invitation uniquement -- /!\ au i du user != i du canal
-	
-*/
