@@ -2,17 +2,17 @@
 
 int	Server::is_op(Client &client, std::string nickname)
 {
-	if (client.getChannel().getOwner() == nickname)
+	if (getClientChannel(client.getChannel()).getOwner() == nickname)
 		return 1;
-	for (size_t i = 0; i < client.getChannel().getOperator().size(); i++){
-		if (client.getChannel().getOperator()[i] == nickname)
+	for (size_t i = 0; i < getClientChannel(client.getChannel()).getOperator().size(); i++){
+		if (getClientChannel(client.getChannel()).getOperator()[i] == nickname)
 				return 1;
 	}
 	return -1;
 }
 
 int	Server::is_on_channel(Client &client, std::string channel) {
-	if (channel != client.getChannel().getName()) {
+	if (channel != client.getChannel()) {
 		std::string err = ERR_NOTONCHANNEL(channel);
 		send(client.getSocket(), err.c_str(), err.size(), 0);
 		return 1;
@@ -52,4 +52,12 @@ void	Server::applyCommand(Client &client) {
 		(this->*(it->second))(client);
 	else
 		std::cerr << RED << ERR_UNKNOWNCOMMAND(client.getBuf()[0]) << RESET << std::endl;
+}
+
+Channel &Server::getClientChannel(std::string channel){
+	for (size_t i = 0; i < _channelsList.size(); i++) {
+		if (channel == _channelsList[i].getName())
+			return _channelsList[i];
+	}
+	return _channelsList[0];
 }

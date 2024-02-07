@@ -40,44 +40,44 @@ void	invisible_mode(Client &client){
 		}
 }
 
-void	invite_mode(Client &client){
+void	Server::invite_mode(Client &client){
 	std::string ret;
-	if (client.getBuf()[2] == "+i" && client.getChannel().getI() == false)
+	if (client.getBuf()[2] == "+i" && getClientChannel(client.getChannel()).getI() == false)
 	{
-		client.getChannel().setI(true);
-		ret = MODE_CHANNELMSG(client.getChannel().getName(), "+i");
+		getClientChannel(client.getChannel()).setI(true);
+		ret = MODE_CHANNELMSG(getClientChannel(client.getChannel()).getName(), "+i");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
-	else if (client.getBuf()[2] == "-i" && client.getChannel().getI() == true)
+	else if (client.getBuf()[2] == "-i" && getClientChannel(client.getChannel()).getI() == true)
 	{
-		client.getChannel().setI(false);
-		ret = MODE_CHANNELMSG(client.getChannel().getName(), "-i");
+		getClientChannel(client.getChannel()).setI(false);
+		ret = MODE_CHANNELMSG(getClientChannel(client.getChannel()).getName(), "-i");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
 }
 
-void	topic_mode(Client &client){
+void	Server::topic_mode(Client &client){
 	std::string ret;
-	if (client.getBuf()[2] == "+t" && client.getChannel().getT() == false)
+	if (client.getBuf()[2] == "+t" && getClientChannel(client.getChannel()).getT() == false)
 	{
-		client.getChannel().setT(true);
-		ret = MODE_CHANNELMSG(client.getChannel().getName(), "+t");
+		getClientChannel(client.getChannel()).setT(true);
+		ret = MODE_CHANNELMSG(getClientChannel(client.getChannel()).getName(), "+t");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
-	else if (client.getBuf()[2] == "-t" && client.getChannel().getT() == true)
+	else if (client.getBuf()[2] == "-t" && getClientChannel(client.getChannel()).getT() == true)
 	{
-		client.getChannel().setT(false);
-		ret = MODE_CHANNELMSG(client.getChannel().getName(), "-t");
+		getClientChannel(client.getChannel()).setT(false);
+		ret = MODE_CHANNELMSG(getClientChannel(client.getChannel()).getName(), "-t");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
 }
 
-int	key_mode(Client &client){
+int	Server::key_mode(Client &client){
 	std::string ret;
 	if (client.getBuf()[2] == "+k")
 	{
 		if (client.getBuf().size() == 4)
-			client.getChannel().setPass(client.getBuf()[3]);
+			getClientChannel(client.getChannel()).setPass(client.getBuf()[3]);
 		else if (client.getBuf().size() > 4) {
 			ret = ERR_BADPASS(client.getHost());
 			send(client.getSocket(), ret.c_str(), ret.size(), 0);
@@ -89,19 +89,19 @@ int	key_mode(Client &client){
 			return 1;
 		}
 
-		ret = MODE_CHANNELMSG(client.getChannel().getName(), "+k");
+		ret = MODE_CHANNELMSG(getClientChannel(client.getChannel()).getName(), "+k");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
 	else if (client.getBuf()[2] == "-k")
 	{
-		client.getChannel().getPass().clear();
-		ret = MODE_CHANNELMSG(client.getChannel().getName(), "-k");
+		getClientChannel(client.getChannel()).getPass().clear();
+		ret = MODE_CHANNELMSG(getClientChannel(client.getChannel()).getName(), "-k");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
 	return 0;
 }
 
-int	max_client_mode(Client &client){
+int	Server::max_client_mode(Client &client){
 	std::string ret;
 	if (client.getBuf()[2] == "+l")
 	{
@@ -118,48 +118,53 @@ int	max_client_mode(Client &client){
 			send(client.getSocket(), err.c_str(), err.size(), 0);
 			return 1;
 		}
-		client.getChannel().setL(l);
-		ret = MODE_CHANNELMSG(client.getChannel().getName(), "+l");
+		getClientChannel(client.getChannel()).setL(l);
+		ret = MODE_CHANNELMSG(getClientChannel(client.getChannel()).getName(), "+l");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
 	else if (client.getBuf()[2] == "-l")
 	{
-		client.getChannel().setL(0);
-		ret = MODE_CHANNELMSG(client.getChannel().getName(), "-l");
+		getClientChannel(client.getChannel()).setL(0);
+		ret = MODE_CHANNELMSG(getClientChannel(client.getChannel()).getName(), "-l");
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 	}
 	return 0;
 }
 
 int	Server::operator_mode(Client &client){
+	
 	std::string ret;
+	if (client.getBuf().size() < 4){
+		ret = ERR_NEEDMOREPARAMS(client.getHost(), client.getBuf()[0]);
+		send(client.getSocket(), ret.c_str(), ret.size(), 0);
+		return 1;
+	}
 	if (client.getBuf()[2] == "+o" && is_op(client, client.getBuf()[3]) == -1)
 	{
-		if (client.getBuf().size() > 3){
-			for (size_t i = 0; i < client.getChannel().getUsers().size(); i++)
+		for (size_t i = 0; i < getClientChannel(client.getChannel()).getUsers().size(); i++)
+		{
+			if (client.getBuf()[3] ==  getClientChannel(client.getChannel()).getUsers()[i])
 			{
-				if (client.getBuf()[3] ==  client.getChannel().getUsers()[i])
-				{
-					client.getChannel().getOperator().push_back(client.getBuf()[3]);
-					ret = MODE_CHANNELMSG(client.getChannel().getName(), "+o");
-					send(client.getSocket(), ret.c_str(), ret.size(), 0);
-					return 1;
-				}
+				getClientChannel(client.getChannel()).getOperator().push_back(client.getBuf()[3]);
+				ret = MODE_CHANNELMSG(getClientChannel(client.getChannel()).getName(), "+o");
+				send(client.getSocket(), ret.c_str(), ret.size(), 0);
+				return 1;
 			}
-			ret = ERR_NOSUCHNICK(client.getHost(), client.getBuf()[3]);
-			send(client.getSocket(), ret.c_str(), ret.size(), 0);
-			return 1;
 		}
-		else {
-			ret = ERR_NEEDMOREPARAMS(client.getHost(), client.getBuf()[0]);
-			send(client.getSocket(), ret.c_str(), ret.size(), 0);
-			return 1;
-		}
+		ret = ERR_NOSUCHNICK(client.getHost(), client.getBuf()[3]);
+		send(client.getSocket(), ret.c_str(), ret.size(), 0);
+		return 1;
 	}
 	else if (client.getBuf()[2] == "-o" && is_op(client, client.getBuf()[3]) == 1) {
-		for (std::vector<std::string>::iterator ite = client.getChannel().getOperator().begin(); ite != client.getChannel().getOperator().end(); ite++) {
-			if (client.getBuf()[3] == *ite)
-				client.getChannel().getOperator().erase(ite);
+		for (std::vector<std::string>::iterator ite = getClientChannel(client.getChannel()).getOperator().begin(); ite != getClientChannel(client.getChannel()).getOperator().end(); ite++) {
+			std::cout << *ite << std::endl;
+			std::cout << client.getBuf()[3] << std::endl;
+			if (client.getBuf()[3] == *ite) {
+				getClientChannel(client.getChannel()).getOperator().erase(ite);
+				ret = MODE_CHANNELMSG(getClientChannel(client.getChannel()).getName(), "-o");
+				send(client.getSocket(), ret.c_str(), ret.size(), 0);
+				break;
+			}
 		}
 	}
 	return 0;
@@ -188,7 +193,7 @@ void	Server::mode(Client &client) {
 		if (is_on_channel(client, client.getBuf()[1]))
 			return ;
 		if (is_op(client, client.getNickName()) == -1){
-			std::string err = ERR_CHANOPRIVSNEEDED(client.getChannel().getName());
+			std::string err = ERR_CHANOPRIVSNEEDED(getClientChannel(client.getChannel()).getName());
 			send(client.getSocket(), err.c_str(), err.size(), 0);
 			return ;
 		}
@@ -215,3 +220,9 @@ void	Server::mode(Client &client) {
 		}
 	}
 }
+
+/*
+
+— i : Définir/supprimer le canal sur invitation uniquement -- /!\ au i du user != i du canal
+	
+*/

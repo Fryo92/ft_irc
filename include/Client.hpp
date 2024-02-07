@@ -25,8 +25,7 @@ class Client
 
 		std::vector<std::string>	_buf;
 
-		Channel 	_activeChannel;
-		Channel 	_commandChannel;
+		std::string 	_activeChannel;
 
 		bool _invisible;
 		bool _irssi;
@@ -52,8 +51,7 @@ class Client
 		bool		getVerif() const {return _verified;};
 		bool		getIrssi() const {return _irssi;};
 		bool		getDeco() const {return _deco;};
-		Channel		getChannel() const {return _activeChannel;};
-		Channel		getCommandchannel() const {return _commandChannel;};
+		std::string		getChannel() {return _activeChannel;};
 		std::vector<std::string>	&getBuf() {return _buf;};
 
 		void	setId(int i) {_id = i;};
@@ -65,8 +63,7 @@ class Client
 		void	setVerif();
 		void	setDeco() {_deco = true;};
 		void	setIrssi() {_irssi = true;};
-		void	setChannel(Channel &channel) {_activeChannel = channel;};
-		void	setCommandchannel(Channel &channel) {_commandChannel = channel;};
+		void	setChannel(Channel channel) {_activeChannel = channel.getName();};
 		void	setBuf(const std::string buffer);
 
 

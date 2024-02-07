@@ -1,9 +1,9 @@
-#######Verif key channel (join.cpp) ---- a tester
-#######Verif mode topic + is operator (topic.cpp) ---- a tester
-#######segfault si dans un channel disco -> try to reco 
-
-
-Commande MODE  ----  a tester
-Commande INVITE --- a tester
-Commande KICK --- a tester
+Topic good
+-o good
+-k good
+-i modif rpl
+-t a tester
+-l a tester
+Kick a regler (RPL)
 Envoie de message --- WIP
+ctrl D

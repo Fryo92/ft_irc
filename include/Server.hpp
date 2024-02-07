@@ -74,6 +74,11 @@ class Server {
 		int		is_op(Client &client, std::string nickname);
 		int		operator_mode(Client &client);
 		int		is_on_channel(Client &client, std::string channel);
+		void	invite_mode(Client &client);
+		void	topic_mode(Client &client);
+		int		key_mode(Client &client);
+		int		max_client_mode(Client &client);
+		Channel &getClientChannel(std::string channel);
 
 };
 

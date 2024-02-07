@@ -30,15 +30,17 @@ void	Server::pass(Client &client){
 }
 
 bool	Server::passIrssi(Client &client, int i){
-	if (client.getBuf()[i + 2] != "NICK"){
-		std::cerr << RED << ERR_PASSWDMISMATCH(_name) << RESET << std::endl;
-		return false;
+	if (client.getBuf().size() >= ((size_t)i + 2)){
+		if (client.getBuf()[i + 2] != "NICK"){
+			std::cerr << RED << ERR_PASSWDMISMATCH(_name) << RESET << std::endl;
+			return false;
+		}
+		else if (client.getBuf()[i + 1] != _password){
+			std::cerr << RED << ERR_PASSWDMISMATCH(_name) << RESET << std::endl;
+			return false;
+		}
+		else
+			client.setPass(client.getBuf()[i + 1]);
 	}
-	else if (client.getBuf()[i + 1] != _password){
-		std::cerr << RED << ERR_PASSWDMISMATCH(_name) << RESET << std::endl;
-		return false;
-	}
-	else
-		client.setPass(client.getBuf()[i + 1]);
 	return true;	
 }

@@ -16,13 +16,13 @@ void	Server::kick(Client &client) {
 	if (is_on_channel(client, client.getBuf()[1]))
 		return ;
 	if (is_op(client, client.getNickName()) == -1){
-		err = ERR_CHANOPRIVSNEEDED(client.getChannel().getName());
+		err = ERR_CHANOPRIVSNEEDED(getClientChannel(client.getChannel()).getName());
 		send(client.getSocket(), err.c_str(), err.size(), 0);
 		return ;
 	}
-	for (std::vector<std::string>::iterator ite = client.getChannel().getUsers().begin(); ite != client.getChannel().getUsers().end(); ite++) {
+	for (std::vector<std::string>::iterator ite = getClientChannel(client.getChannel()).getUsers().begin(); ite != getClientChannel(client.getChannel()).getUsers().end(); ite++) {
 		if (client.getBuf()[2] == *ite)
-			client.getChannel().getUsers().erase(ite);
+			getClientChannel(client.getChannel()).getUsers().erase(ite);
 	}
 }
 

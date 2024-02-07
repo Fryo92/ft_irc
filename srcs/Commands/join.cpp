@@ -22,21 +22,24 @@ void	joinChannel(Client &client, Channel &channel) {
 		send(client.getSocket(), err.c_str(), err.size(), 0);
 		return ;
 	}
+	std::cout << channel.getI() << std::endl;
+	
 	if (channel.getI() == true)
 	{
-		int i = 0;
-		for	(size_t i = 0; i < channel.getInvite().size(); i++)
+
+		size_t i;
+		for	(i = 0; i < channel.getInvite().size(); i++)
 		{
 			if (client.getNickName() == channel.getInvite()[i]) {
-				i = 1;
 				break ;
 			}
 		}
-		if (i == 0) {
+		if (i == channel.getInvite().size()) {
 			std::string err = ERR_INVITEONLYCHAN(channel.getName());
 			send(client.getSocket(), err.c_str(), err.size(), 0);
 			return ;
 		}
+
 	}
 	if (check_chanpswd(client, channel)) {
 		std::string err = ERR_BADCHANNELKEY(channel.getName());
@@ -46,15 +49,14 @@ void	joinChannel(Client &client, Channel &channel) {
 	channel.getUsers().push_back(client.getNickName());
 	std::string rpl;
 	if (channel.getTopic().size() > 0)
-		rpl = RPL_TOPIC(user_id(client.getUserName(), client.getNickName()), channel.getName(), channel.getTopic());
+		rpl = RPL_TOPIC(channel.getName(), channel.getTopic());
 	else
-		rpl = RPL_NOTOPIC(user_id(client.getUserName(), client.getNickName()), channel.getName());
+		rpl = RPL_NOTOPIC(channel.getName());
 	client.setChannel(channel);
 	send(client.getSocket(), rpl.c_str(), rpl.size(), 0);
 }
 
 void	Server::join(Client& client) {
-	
 	if (client.getBuf().size() == 1) {
 		std::cerr << RED << ERR_NEEDMOREPARAMS(_name, client.getBuf()[0]) << RESET << std::endl;
 		return ;
@@ -92,7 +94,6 @@ void	Server::join(Client& client) {
 	}	
 	if (channelName.size() > 32)
 		channelName = channelName.substr(0, 32);
-
 	Channel channel(channelName, client.getNickName());
 	_channelsList.push_back(channel);
 	_activeChannels++;

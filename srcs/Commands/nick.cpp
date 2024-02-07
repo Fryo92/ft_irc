@@ -52,13 +52,18 @@ void	Server::nick(Client &client){
 void	Server::nickIrssi(Client &client, int i){
 	for (std::map<int, Client>::iterator ite = clientsManage.begin(); ite != clientsManage.end(); ite++)
 	{
-		if (ite->second.getNickName() == client.getBuf()[i + 1]){
-			std::stringstream ss;
-			ss << _activeClients;
-			std::string str = ss.str();
-			client.setNickName(client.getBuf()[i + 1] + str);
-			return;
+		if (client.getBuf().size() > (size_t)i){
+			if (ite->second.getNickName() == client.getBuf()[i + 1]){
+				std::stringstream ss;
+				ss << _activeClients;
+				std::string str = ss.str();
+				client.setNickName(client.getBuf()[i + 1] + str);
+				return;
+			}
 		}
 	}
-	client.setNickName(client.getBuf()[i + 1]);
+	if (client.getBuf().size() > (size_t)i)
+		client.setNickName(client.getBuf()[i + 1]);
+	else
+		client.setNickName("default");	
 }

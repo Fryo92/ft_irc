@@ -3,29 +3,37 @@
 
 void	Server::topic(Client &client) {
 
-	if (client.getBuf().size() == 1)
+	if (client.getBuf().size() < 2){
+		std::string ret = ERR_NEEDMOREPARAMS(client.getHost(), client.getBuf()[0]);
+		send(client.getSocket(), ret.c_str(), ret.size(), 0);
+	}
+	if (is_on_channel(client, client.getBuf()[1]))
+		return ;
+	if (client.getBuf().size() == 2)
 	{
 		std::string rpl;
-		if (client.getCommandchannel().getTopic().size() > 0)
-			rpl = RPL_TOPIC(user_id(client.getUserName(), client.getNickName()), client.getCommandchannel().getName(), client.getCommandchannel().getTopic());
+		if (getClientChannel(client.getChannel()).getTopic().size() > 0)
+			rpl = RPL_TOPIC(getClientChannel(client.getChannel()).getName(), getClientChannel(client.getChannel()).getTopic());
 		else
-			rpl = RPL_NOTOPIC(user_id(client.getUserName(), client.getNickName()), client.getCommandchannel().getName());
+			rpl = RPL_NOTOPIC(getClientChannel(client.getChannel()).getName());
 		send(client.getSocket(), rpl.c_str(), rpl.size(), 0);
 	}
-	else
+	else if (client.getBuf().size() > 2)
 	{
-		if (client.getCommandchannel().getT() == true) {
+		if (getClientChannel(client.getChannel()).getT() == true) {
 			if (is_op(client, client.getNickName()) == -1)
 				return ;
 		}
 		
 		std::string topic;
 
-		for (size_t i = 1; i < client.getBuf().size(); i++){
+		for (size_t i = 2; i < client.getBuf().size(); i++){
 			topic += client.getBuf()[i];
 			if (i < client.getBuf().size() - 1)
 				topic += " ";
 		}
-		client.getCommandchannel().setTopic(topic);
+		getClientChannel(client.getChannel()).setTopic(topic);
+		std::string rpl = RPL_TOPIC(getClientChannel(client.getChannel()).getName(), topic);
+		send(client.getSocket(), rpl.c_str(), rpl.size(), 0);
 	}
 }

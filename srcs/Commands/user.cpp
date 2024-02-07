@@ -47,10 +47,12 @@ void	Server::user(Client &client){
 
 void	Server::userIrssi(Client &client, int i){
 	std::string user;
-	for (int j = i + 1; client.getBuf()[j] != "localhost"; j++){
+	for (size_t j = i + 1; client.getBuf()[j] != "localhost" && j < client.getBuf().size(); j++){
 		user += client.getBuf()[j];
-		if (client.getBuf()[j + 1] != "localhost")
-			user += " ";
+		if (client.getBuf().size() > j){
+			if (client.getBuf()[j + 1] != "localhost")
+				user += " ";
+		}
 	}
 	client.setUserName(user);
 }
