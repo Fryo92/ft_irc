@@ -25,7 +25,7 @@
 # define ERR_NEEDMOREPARAMS(host, command) host + " 461 " + command + " :Not enough parameters\r\n"
 # define ERR_ALREADYREGISTRED(host) host + " 462 :You may not reregister\r\n"
 # define ERR_PASSWDMISMATCH(host) host + " 464 :Password incorrect\r\n"
-# define ERR_CHANNELISFULL(channel) ":localhost 471 " + channel + " :Cannot join channel (+l)\r\n"
+# define ERR_CHANNELISFULL(channel) ":localhost 471 " + channel + " :" + channel + "\r\n"
 # define ERR_UNKNOWNMODE(host, ch) host + " 472 " + ch + " :is unknown mode char to me\r\n"
 # define ERR_INVITEONLYCHAN(channel) ":localhost 473 " + channel + " :" + channel + "\r\n"
 # define ERR_BADCHANNELKEY(channel) ":localhost 475 " + channel + " :" + channel + "\r\n"

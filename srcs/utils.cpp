@@ -61,3 +61,15 @@ Channel &Server::getClientChannel(std::string channel){
 	}
 	return _channelsList[0];
 }
+
+void	Server::delete_client_chan(Client &client) {
+	for (size_t i = 0; i < _channelsList.size(); i++) {
+		for (size_t j = 0; j < _channelsList[i].getUsers().size(); j++) {
+			if (client.getNickName() == _channelsList[i].getUsers()[j]) {
+				std::cout << _channelsList[i].getUsers()[j] << std::endl;
+				_channelsList[i].getUsers().erase(_channelsList[i].getUsers().begin() + j);
+				j--;
+			}
+		}
+	}
+}

@@ -100,12 +100,8 @@ void	Server::listenClient() {
 					clientsManage[_fds[i].fd].getBuf().clear();
 				}
 			}
-			else if (bytesRead == 0){
-				deleteClient(clientsManage[_fds[i].fd]);
-				i--;
-			}
 			else {
-				if (bytesRead < 0)
+				delete_client_chan(clientsManage[_fds[i].fd]);
 				deleteClient(clientsManage[_fds[i].fd]);
 				i--;
 			}

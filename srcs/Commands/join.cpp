@@ -22,11 +22,8 @@ void	joinChannel(Client &client, Channel &channel) {
 		send(client.getSocket(), err.c_str(), err.size(), 0);
 		return ;
 	}
-	std::cout << channel.getI() << std::endl;
-	
 	if (channel.getI() == true)
 	{
-
 		size_t i;
 		for	(i = 0; i < channel.getInvite().size(); i++)
 		{
@@ -97,5 +94,5 @@ void	Server::join(Client& client) {
 	Channel channel(channelName, client.getNickName());
 	_channelsList.push_back(channel);
 	_activeChannels++;
-	joinChannel(client, channel);
+	joinChannel(client, _channelsList[_channelsList.size() - 1]);
 }

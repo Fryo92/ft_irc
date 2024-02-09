@@ -1,9 +1,9 @@
 Topic good
 -o good
 -k good
--i modif rpl
--t a tester
--l a tester
+-i modif rpl ??
+-t good
+-l good
 Kick a regler (RPL)
 Envoie de message --- WIP
 ctrl D
