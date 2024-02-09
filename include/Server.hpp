@@ -80,6 +80,8 @@ class Server {
 		void	topic_mode(Client &client);
 		void	delete_client_chan(Client &client);
 		Channel &getClientChannel(std::string channel);
+		void	send_all(Channel &channel, std::string rpl, std::string client);
+
 
 };
 

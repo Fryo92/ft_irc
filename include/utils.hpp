@@ -13,12 +13,13 @@
 
 # define user_id(user, nick) ":" + user + "!" + nick + "@localhost"
 
-# define ERR_NOSUCHNICK(host, nick) host + " 401 " + nick + " :No such nick/channel\r\n"
+# define ERR_NOSUCHNICK(nick) ":localhost 401 " + nick + " :No such nick/channel\r\n"
 # define ERR_NOSUCHCHANNEL(channel) ":localhost 403 " + channel + " :No such channel\r\n"
 # define ERR_UNKNOWNCOMMAND(command) ":localhost 421 " + command + " :Unknown command\r\n"
 # define ERR_NONICKNAMEGIVEN(host) host + " 431 :No nick name given\r\n"
 # define ERR_ERRONEUSNICKNAME(host, nickname) host + " 432 " + nickname + " :Erroneus nickname\r\n"
 # define ERR_NICKNAMEINUSE(host, nickname) host + " 433 " + nickname + " :Nickname is already in use\r\n"
+# define ERR_USERNOTINCHANNEL(nickname, channel) ":localhost 441 " + nickname + " " + channel + "\r\n"
 # define ERR_NOTONCHANNEL(channel) ":localhost 442 " + channel + " :You're not on that channel\r\n"
 # define ERR_USERONCHANNEL(nickname, channel) ":localhost 443 " + nickname + " " + channel + " :is already on channel\r\n"
 # define ERR_NOTREGISTERED(host) host + " 451 :You have not registered\r\n"
@@ -41,6 +42,9 @@
 # define RPL_NOTOPIC(channel) ":localhost 331 " + channel + " :No topic set for " + channel + "\r\n"
 # define RPL_TOPIC(channel, topic)":localhost 332 " + channel + " " + channel + " " + topic + "\r\n"
 # define RPL_INVITING(channel, nickname) channel + " " + nickname + "\r\n"
+# define RPL_KICK(channel, operator, nickname, reason) ":" + operator + " KICK " + channel + " " + nickname + " " + reason + "\r\n"
+# define RPL_PRIV(nickname, target, message) ":" + nickname + " PRIVMSG "  + target + " " + message + "\r\n"
+# define RPL_NOTICE(nickname, target, message) ":" + nickname + " NOTICE " + target + " " + message + "\r\n"
 # define MODE_USERMSG(client, mode) ":" + client + " MODE " + client + " :" + mode + "\r\n"
 # define MODE_CHANNELMSG(channel, mode) ":" + channel + " MODE " + channel + " :" + mode + "\r\n"
 

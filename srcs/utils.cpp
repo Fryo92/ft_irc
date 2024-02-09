@@ -1,5 +1,17 @@
 #include "Server.hpp"
 
+void	Server::send_all(Channel &channel, std::string rpl, std::string client)
+{
+	for (size_t i = 0; i < channel.getUsers().size(); i++)
+	{
+		for (size_t j = 0; j < clientsManage.size(); j++)
+		{
+			if (channel.getUsers()[i] == clientsManage[j].getNickName() && client != channel.getUsers()[i])
+				send(clientsManage[j].getSocket(), rpl.c_str(), rpl.size(), 0);
+		}
+	}
+}
+
 int	Server::is_op(Client &client, std::string nickname)
 {
 	if (getClientChannel(client.getChannel()).getOwner() == nickname)

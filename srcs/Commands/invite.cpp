@@ -13,10 +13,13 @@ void	Server::invite(Client &client){
 		send(client.getSocket(), err.c_str(), err.size(), 0);
 		return ;
 	}
-	if (is_on_channel(client, client.getBuf()[2]))
+	if (is_on_channel(client, client.getBuf()[2])){
+		err = ERR_NOTONCHANNEL(getClientChannel(client.getChannel()).getName());
+		send(client.getSocket(), err.c_str(), err.size(), 0);
 		return ;
+	}
 	if (searchClientChannel(client) != 1){
-		err = ERR_NOSUCHNICK(client.getHost(), client.getBuf()[1]);
+		err = ERR_NOSUCHNICK(client.getBuf()[1]);
 		send(client.getSocket(), err.c_str(), err.size(), 0);
 		return ;
 	}

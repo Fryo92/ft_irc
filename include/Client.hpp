@@ -51,7 +51,7 @@ class Client
 		bool		getVerif() const {return _verified;};
 		bool		getIrssi() const {return _irssi;};
 		bool		getDeco() const {return _deco;};
-		std::string		getChannel() {return _activeChannel;};
+		std::string		&getChannel() {return _activeChannel;};
 		std::vector<std::string>	&getBuf() {return _buf;};
 
 		void	setId(int i) {_id = i;};

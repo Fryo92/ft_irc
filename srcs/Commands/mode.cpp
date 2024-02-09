@@ -151,7 +151,7 @@ int	Server::operator_mode(Client &client){
 				return 1;
 			}
 		}
-		ret = ERR_NOSUCHNICK(client.getHost(), client.getBuf()[3]);
+		ret = ERR_USERNOTINCHANNEL(getClientChannel(client.getChannel()).getName() ,client.getBuf()[3]);
 		send(client.getSocket(), ret.c_str(), ret.size(), 0);
 		return 1;
 	}
@@ -190,8 +190,11 @@ void	Server::mode(Client &client) {
 			if (_channelsList[ite].getName() == client.getBuf()[1])
 				i = ite;
 		}
-		if (is_on_channel(client, client.getBuf()[1]))
+		if (is_on_channel(client, client.getBuf()[1])) {
+			std::string err = ERR_NOTONCHANNEL(getClientChannel(client.getChannel()).getName());
+			send(client.getSocket(), err.c_str(), err.size(), 0);
 			return ;
+		}
 		if (is_op(client, client.getNickName()) == -1){
 			std::string err = ERR_CHANOPRIVSNEEDED(getClientChannel(client.getChannel()).getName());
 			send(client.getSocket(), err.c_str(), err.size(), 0);
