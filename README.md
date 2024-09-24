@@ -1,6 +1,6 @@
 # FT_IRC
 
-## SUBJECT
+## SUJET
 
 Dans ce projet en duo, nous avons développé un serveur IRC en C++.
 
