@@ -8,6 +8,6 @@ Le serveur suis les normes RFC 1459.
 
 ### Lancement
 
-make && ./ircserv <port> <passowrd>
+Lancer la commande: **make && ./ircserv <port> <passowrd>**
 
 Le serveur est compatible avec le client IRSSI.
